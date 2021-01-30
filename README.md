@@ -13,4 +13,5 @@
 
 ## 📷 Screenshot
 ## タイトル画面
-![スクリーンショット 2020-09-09 21 16 36](https://user-images.githubusercontent.com/60394438/106357279-88de5780-6348-11eb-910d-ddd710ac0515.png)
+![](https://user-images.githubusercontent.com/60394438/106357876-3f900700-634c-11eb-9cb7-9a76f136693e.gif)
+
