@@ -13,7 +13,10 @@
 
 ## 📷 Screenshot
 ## タイトル画面
-![](https://user-images.githubusercontent.com/60394438/106357876-3f900700-634c-11eb-9cb7-9a76f136693e.gif)
+![title](https://user-images.githubusercontent.com/60394438/106357876-3f900700-634c-11eb-9cb7-9a76f136693e.gif)
 
 ## ゲーム画面
-![](https://user-images.githubusercontent.com/60394438/121796143-e87f3480-cc51-11eb-823f-e8ad1aca1d5c.gif)
+![main](https://user-images.githubusercontent.com/60394438/121796143-e87f3480-cc51-11eb-823f-e8ad1aca1d5c.gif)
+
+## エンディング画面
+![ending](https://user-images.githubusercontent.com/60394438/121797040-94c41980-cc58-11eb-8a05-406b0b5d83c6.gif)
