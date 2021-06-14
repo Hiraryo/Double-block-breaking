@@ -13,11 +13,13 @@
 #include <time.h>       //time関数を使うために必要
 #include "define.h"
 
+/*----------------------関数プロトタイプ宣言----------------------*/
 int bar_ball_move(void);    //バーとボールを動かす関数
 int game_clear(void);       //ゲームクリア関数
 int game_over(void);        //ゲームオーバー関数
 int stage_data_select(void); //ステージデータ選択関数
 int stage_data_load(void);  //ステージデータを読み込む関数
+/*------------------------------------------------------------*/
 
 doubleLayer layers; //(1)ダブルレイヤの変数を宣言する
 doubleLayer layers_ball; //残機のレイヤー
