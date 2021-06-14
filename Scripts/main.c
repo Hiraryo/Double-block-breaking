@@ -11,15 +11,7 @@
 #include <handy.h>
 #include <stdlib.h>
 #include <time.h>       //time関数を使うために必要
-
-#define WIDTH 1000       //ウィンドウの幅
-#define HEIGHT 800      //ウィンドウの高さ
-#define GAME_WIDTH 800  //ゲーム画面の幅
-#define BOX_WIDTH 80    //バーの幅
-#define BLOCK_WIDTH 90 //ブロックの幅
-#define BLOCK_HEIGHT 30 //ブロックの高さ
-#define BLOCK_X_START 100  //ブロックのX座標(１番左下のブロック)
-#define BLOCK_Y_START 500   //ブロックのY座標(１番左下のブロック)
+#include "define.h"
 
 int bar_ball_move(void);    //バーとボールを動かす関数
 int game_clear(void);       //ゲームクリア関数

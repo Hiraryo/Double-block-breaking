@@ -9,9 +9,8 @@
 #include <stdio.h>
 #include <handy.h>
 #include <stdlib.h>
+#include "define.h"
 
-#define WIDTH 1000       //ウィンドウの幅
-#define HEIGHT 800      //ウィンドウの高さ
 
 doubleLayer layers;
 

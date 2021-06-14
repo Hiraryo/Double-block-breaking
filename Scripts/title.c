@@ -10,10 +10,7 @@
 #include <handy.h>
 #include <stdlib.h>     //rand関数を使うために必要
 #include <time.h>       //time関数を使うために必要
-
-
-#define WIDTH 1000       //ウィンドウの幅
-#define HEIGHT 800      //ウィンドウの高さ
+#include "define.h"
 
 doubleLayer layers_title; //(1)ダブルレイヤの変数を宣言する
 char program[] = "./main";
