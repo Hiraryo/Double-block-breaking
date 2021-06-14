@@ -11,19 +11,15 @@
 #include <handy.h>
 #include <stdlib.h>
 #include <time.h>       //time関数を使うために必要
+#include "define.h"
 
-#define WIDTH 1000       //ウィンドウの幅
-#define HEIGHT 800      //ウィンドウの高さ
-#define GAME_WIDTH 800  //ゲーム画面の幅
-#define BOX_WIDTH 80    //バーの幅
-#define BLOCK_WIDTH 90 //ブロックの幅
-#define BLOCK_HEIGHT 30 //ブロックの高さ
-#define BLOCK_X_START 100  //ブロックのX座標(１番左下のブロック)
-#define BLOCK_Y_START 500   //ブロックのY座標(１番左下のブロック)
-
+/*----------------------関数プロトタイプ宣言----------------------*/
 int bar_ball_move(void);    //バーとボールを動かす関数
 int game_clear(void);       //ゲームクリア関数
 int game_over(void);        //ゲームオーバー関数
+int stage_data_select(void); //ステージデータ選択関数
+int stage_data_load(void);  //ステージデータを読み込む関数
+/*------------------------------------------------------------*/
 
 doubleLayer layers; //(1)ダブルレイヤの変数を宣言する
 doubleLayer layers_ball; //残機のレイヤー
@@ -56,12 +52,15 @@ int block_dis_y = 0;    //block_dis_yからどれくらい離れているか
 char program[] = "./title";
 char program2[] = "./ending";
 int result;
+int mes_win;
 int block_array[6][6];
 FILE *fp;
 int stage_no;
 
-int main(){
+int main(void){
     srand(time(NULL));
+    stage_data_select();    //ステージデータを選択
+    stage_data_load();  //ステージデータを読み込む
     windowID = HgOpen(WIDTH,HEIGHT);
     soundID_1 = HgSoundLoad("../Sounds/9254.mp3");//ステージBGM
     soundID_2 = HgSoundLoad("../Sounds/Clear1.mp3");//クリア音
@@ -77,6 +76,11 @@ int main(){
     HgSoundVolume(SE_1,0.8,0);
     HgSoundVolume(SE_2,0.8,0);
     HgSoundPlay(soundID_1);
+    bar_ball_move();    //バーとボールを動かす関数
+
+    return 0;
+}
+int stage_data_select(){
     stage_no = rand() % 5;
     stage_no += 1;
     switch (stage_no){
@@ -101,9 +105,12 @@ int main(){
         break;
     }
     if(fp==NULL){
-        printf("ファイルがありません\n");
-            return -1;
-        }
+        mes_win = HgAlert("ステージデータを正常に読み込むことが出来なかったので、アプリケーションを終了しました。","OK",NULL,NULL);
+    }
+    return 0;
+}
+
+int stage_data_load(){
     for(i = 0; i < block_no; i ++){
         for(j = 0; j < block_no; j ++){
             fscanf(fp,"%d",&block_array[i][j]);
@@ -112,8 +119,6 @@ int main(){
             }
         }
     }
-    bar_ball_move();    //バーとボールを動かす関数
-
     return 0;
 }
 
@@ -306,19 +311,23 @@ return 0;
 int game_clear(){
         HgClear();
         HgSoundPlay(soundID_2);
-        int mas_win = HgAlert("GAME CLEAR!\n\nOKでエンディングへ",NULL,NULL,NULL);
-        printf("%d\n",mas_win);
-        HgSoundStop(soundID_2);
-        HgClose();result = system(program2);
+        mes_win = HgAlert("GAME CLEAR!\n\nOKでエンディングへ","OK",NULL,NULL);
+        if(mes_win == 0){
+            HgSoundStop(soundID_2);
+            result = system(program2);
+            HgClose();
+        }
     return 0;
 }
 
 int game_over(){
         HgClear();
         HgSoundPlay(soundID_3);
-        int mas_win = HgAlert("GAME OVER!\n\nOKでタイトルへ",NULL,NULL,NULL);
-        printf("%d\n",mas_win);
-        HgSoundStop(soundID_3);
-        HgClose();result = system(program);
+        mes_win = HgAlert("GAME OVER!\n\nOKでタイトルへ","OK",NULL,NULL);
+        if(mes_win == 0){
+            HgSoundStop(soundID_3);
+            result = system(program);
+            HgClose();
+        }
     return 0;
 }
