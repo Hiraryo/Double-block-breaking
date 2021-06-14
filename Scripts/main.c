@@ -52,12 +52,15 @@ int block_dis_y = 0;    //block_dis_yからどれくらい離れているか
 char program[] = "./title";
 char program2[] = "./ending";
 int result;
+int mes_win;
 int block_array[6][6];
 FILE *fp;
 int stage_no;
 
 int main(void){
     srand(time(NULL));
+    stage_data_select();    //ステージデータを選択
+    stage_data_load();  //ステージデータを読み込む
     windowID = HgOpen(WIDTH,HEIGHT);
     soundID_1 = HgSoundLoad("../Sounds/9254.mp3");//ステージBGM
     soundID_2 = HgSoundLoad("../Sounds/Clear1.mp3");//クリア音
@@ -73,8 +76,6 @@ int main(void){
     HgSoundVolume(SE_1,0.8,0);
     HgSoundVolume(SE_2,0.8,0);
     HgSoundPlay(soundID_1);
-    stage_data_select();    //ステージデータを選択
-    stage_data_load();  //ステージデータを読み込む
     bar_ball_move();    //バーとボールを動かす関数
 
     return 0;
@@ -104,8 +105,7 @@ int stage_data_select(){
         break;
     }
     if(fp==NULL){
-        printf("ファイルがありません\n");
-        return -1;
+        mes_win = HgAlert("ステージデータを正常に読み込むことが出来なかったので、アプリケーションを終了しました。","OK",NULL,NULL);
     }
     return 0;
 }
@@ -311,19 +311,23 @@ return 0;
 int game_clear(){
         HgClear();
         HgSoundPlay(soundID_2);
-        int mas_win = HgAlert("GAME CLEAR!\n\nOKでエンディングへ",NULL,NULL,NULL);
-        printf("%d\n",mas_win);
-        HgSoundStop(soundID_2);
-        HgClose();result = system(program2);
+        mes_win = HgAlert("GAME CLEAR!\n\nOKでエンディングへ","OK",NULL,NULL);
+        if(mes_win == 0){
+            HgSoundStop(soundID_2);
+            result = system(program2);
+            HgClose();
+        }
     return 0;
 }
 
 int game_over(){
         HgClear();
         HgSoundPlay(soundID_3);
-        int mas_win = HgAlert("GAME OVER!\n\nOKでタイトルへ",NULL,NULL,NULL);
-        printf("%d\n",mas_win);
-        HgSoundStop(soundID_3);
-        HgClose();result = system(program);
+        mes_win = HgAlert("GAME OVER!\n\nOKでタイトルへ","OK",NULL,NULL);
+        if(mes_win == 0){
+            HgSoundStop(soundID_3);
+            result = system(program);
+            HgClose();
+        }
     return 0;
 }
