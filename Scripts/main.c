@@ -16,6 +16,8 @@
 int bar_ball_move(void);    //バーとボールを動かす関数
 int game_clear(void);       //ゲームクリア関数
 int game_over(void);        //ゲームオーバー関数
+int stage_data_select(void); //ステージデータ選択関数
+int stage_data_load(void);  //ステージデータを読み込む関数
 
 doubleLayer layers; //(1)ダブルレイヤの変数を宣言する
 doubleLayer layers_ball; //残機のレイヤー
@@ -52,7 +54,7 @@ int block_array[6][6];
 FILE *fp;
 int stage_no;
 
-int main(){
+int main(void){
     srand(time(NULL));
     windowID = HgOpen(WIDTH,HEIGHT);
     soundID_1 = HgSoundLoad("../Sounds/9254.mp3");//ステージBGM
@@ -69,6 +71,13 @@ int main(){
     HgSoundVolume(SE_1,0.8,0);
     HgSoundVolume(SE_2,0.8,0);
     HgSoundPlay(soundID_1);
+    stage_data_select();    //ステージデータを選択
+    stage_data_load();  //ステージデータを読み込む
+    bar_ball_move();    //バーとボールを動かす関数
+
+    return 0;
+}
+int stage_data_select(){
     stage_no = rand() % 5;
     stage_no += 1;
     switch (stage_no){
@@ -94,8 +103,12 @@ int main(){
     }
     if(fp==NULL){
         printf("ファイルがありません\n");
-            return -1;
-        }
+        return -1;
+    }
+    return 0;
+}
+
+int stage_data_load(){
     for(i = 0; i < block_no; i ++){
         for(j = 0; j < block_no; j ++){
             fscanf(fp,"%d",&block_array[i][j]);
@@ -104,8 +117,6 @@ int main(){
             }
         }
     }
-    bar_ball_move();    //バーとボールを動かす関数
-
     return 0;
 }
 
