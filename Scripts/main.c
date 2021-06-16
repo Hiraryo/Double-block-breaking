@@ -43,7 +43,7 @@ int ball_dx = 8, ball_dy = 8;//ボールの移動量Xと移動量Y
 int ball_r = 16;   //ボールの半径(ball_rの値はball_dx , ball_dyの値の倍数)
 int ball_zanki = 2; //ボール残機の初期値(この場合の残機数は３つ)
 int score = 0;  //スコア
-int block_no = 6;   //ブロックの段数
+int block_no = 6;   //ブロックの段数(6x6)
 int block_space_w = 20;  //ブロックとブロックの間隔(左右)
 int block_space_h = 10;   //ブロックとブロックの間隔(上下)
 int block_line_x = 0;
@@ -77,7 +77,6 @@ int main(void){
     HgSoundVolume(SE_2,0.8,0);
     HgSoundPlay(soundID_1);
     bar_ball_move();    //バーとボールを動かす関数
-
     return 0;
 }
 int stage_data_select(){
@@ -140,7 +139,7 @@ int bar_ball_move(){
         }
         //ブロックの当たり判定
         if (ball_y >= 500){
-            block_line_x = ((ball_y % 500) / 40);   //ボールが今何行目にあるのかを計算
+            block_line_x = ((ball_y % 500) / 40);   //ボールが今何列目にあるのかを計算
         }
         if (ball_x >= 100){
             block_line_y = (ball_x / 100 - 1);    //ボールが今何行目にあるのかを計算
