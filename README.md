@@ -5,18 +5,18 @@
 ご使用前に、この「取扱説明書」をよくお読みいただき、正しい使用方法でご愛用ください。なお、この「取扱説明書」は大切に保管してください。
 
 # CONTENTS
-- ご使用いただく前に
-- 使用方法
-- 操作方法
-- 対応OS
-- 著作権について
-- 免責事項
-- クレジット（敬称略/順不同）
+- [ご使用いただく前に](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E3%81%94%E4%BD%BF%E7%94%A8%E3%81%84%E3%81%9F%E3%81%A0%E3%81%8F%E5%89%8D%E3%81%AB)
+- [使用方法](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95)
+- [操作方法](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95)
+- [対応OS](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E5%AF%BE%E5%BF%9Cos)
+- [著作権について](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E8%91%97%E4%BD%9C%E6%A8%A9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+- [免責事項](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E5%85%8D%E8%B2%AC%E4%BA%8B%E9%A0%85)
+- [クレジット（敬称略/順不同）](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88%E6%95%AC%E7%A7%B0%E7%95%A5%E9%A0%86%E4%B8%8D%E5%90%8C)
 
 ## ご使用いただく前に
-- はじめに
-- 安全に使用していただくために・・・
-- セット内容
+- [はじめに](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB)
+- [安全に使用していただくために・・・](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E5%AE%89%E5%85%A8%E3%81%AB%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%A6%E3%81%84%E3%81%9F%E3%81%A0%E3%81%8F%E3%81%9F%E3%82%81%E3%81%AB)
+- [セット内容](https://github.com/Hiraryo/Double-block-breaking/tree/develop#%E3%82%BB%E3%83%83%E3%83%88%E5%86%85%E5%AE%B9)
 
 <h2 align="center">はじめに</h2>
 
