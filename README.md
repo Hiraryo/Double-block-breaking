@@ -46,6 +46,7 @@ root/<br>
 
 ## 使用方法
 - ゲームの流れ
+
 - ゲームの始め方
 - ミスとゲームオーバー
 - ゲームの終了方法
@@ -89,8 +90,24 @@ Handy Graphicの詳細については[こちら](http://www.cc.kyoto-su.ac.jp/~o
     - 平井　崚太
 
 
-## ブロックの2次元配列について
+## ブロックの2次元配列と表示手法について
 ![Secondary array](https://user-images.githubusercontent.com/60394438/122278895-65e0c880-cf22-11eb-946b-17ed224001a3.png)
+```C
+//ブロック表示
+layerID_block = HgLSwitch(&layers_block);
+HgLClear(layerID_block);
+for(i = 0; i < block_no; i ++){
+    for(j = 0; j< block_no; j ++){
+        if (block_array[i][j] != 0){
+            HgWSetFillColor(layerID_block,HG_RED);
+            HgWSetColor(layerID_block,HG_WHITE);
+            HgWSetWidth(layerID_block,2.0);
+            HgWBoxFill(layerID_block,(j+1) * BLOCK_X_START + block_space_w, (i+1) * BLOCK_Y_START + block_space_h - (460 * i),BLOCK_WIDTH,BLOCK_HEIGHT,1);
+        }
+    }
+}
+```
+本作の当たり判定は、ブロックの2次配列の値とボールのXY座標の値で判定を行なっております。
 
 ## 座標と変数について
 ![Coordinates and variables](https://user-images.githubusercontent.com/60394438/122274121-2d8abb80-cf1d-11eb-9a67-fb557f011995.png)
