@@ -136,7 +136,7 @@ int HgSetFillColor(hgcolor clr)<br>
 
 [Handy Graphicユーザーズガイド](http://www.cc.kyoto-su.ac.jp/~ogihara/Hg/products/guide0.80.pdf)より引用
 
-- 表１：色のマクロ定義
+#### 表１：色のマクロ定義
 > |色|マクロ名|色|マクロ名|色|マクロ名|色|マクロ名|
 > |:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 > |白|HG_WHITE|赤|HG_RED|シアン|HG_CYAN|空色|HG_SKYBLUE
