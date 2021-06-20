@@ -107,7 +107,11 @@ for(i = 0; i < block_no; i ++){
     }
 }
 ```
-本作の当たり判定は、ブロックの2次配列の値とボールのXY座標の値で判定を行なっております。
+>int HgBoxFill(double x, double y, double w, double h, int stroke)<br>
+><u>引数</u>　　x,y:　左下隅の座標　　w,h:　幅と高さ　　stroke:　周囲を描くかどうか<br>
+><u>返り値</U>　0: 　正常、  -1:　異常<br>------------------------------------------------------------------------------<br>
+>HgBoxFill()は、座標(x,y)を左下隅とする幅w、高さhの塗りつぶされた長方形を描きます。塗りつぶしにはHgSetFillColor()で指定した色が使われます。引数strokeが0の場合は周囲に長方形を描きません。0以外の値(例えば1)の場合、他の線図形と同じ太さ、同じ色の線で長方形を描きます。<br>
+左下隅の座標はウィンドウの外部の点でも構いません。幅と高さは w ≥ 0.0, h ≥ 0.0の実数値です。
 
 ## 座標と変数について
 ![Coordinates and variables](https://user-images.githubusercontent.com/60394438/122274121-2d8abb80-cf1d-11eb-9a67-fb557f011995.png)
@@ -133,6 +137,7 @@ if (ball_y >= BLOCK_Y_START && ball_y <= (BLOCK_HEIGHT * block_no) + (block_spac
     }
 }
 ```
+本作の当たり判定は、ブロックの2次配列の値とボールのXY座標の値で判定を行なっております。
 
 ## 📷 Screenshot
 ## タイトル画面
