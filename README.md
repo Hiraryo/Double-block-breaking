@@ -132,6 +132,15 @@ int HgSetFillColor(hgcolor clr)<br>
 <u>返り値</u>　 0:　正常、　-1:異常
 <br>・・・・・・・・・・・・・・・・・・・<br>
 
+- 表２：色のマクロ定義
+
+|色|マクロ名|色|マクロ名|色|マクロ名|色|マクロ名|
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+|白|HG_WHITE|赤|HG_RED|シアン|HG_CYAN|空色|HG_SKYBLUE
+|黒|HG_BLACK|緑|HG_GREEN|オレンジ|HG_ORANGE|濃赤色|HG_DRED
+|灰色|HG_GRAY|青|HG_BLUE|ピンク|HG_PINK|濃緑色|HG_DGREEN
+|淡灰色|HG_LGRAY|黄|HG_YELLOW|マゼンタ|HG_MAGENTA|濃青色|HG_DBLUE|
+|濃灰色|HG_DGRAY|紫|HG_PURPLE|茶|HG_BROWN|透明|HG_CLEAR|
 #### 描画関数について
 ##### 長方形
 >int HgBoxFill(double x, double y, double w, double h, int stroke)<br>
