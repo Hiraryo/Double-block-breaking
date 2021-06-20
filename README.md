@@ -117,6 +117,8 @@ int HgSetWidth(double t)<br>
 <br>＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/＿/<br>
 線の太さの指定は、直線、円、長方形などの図形に共通して有効です。
 
+[Handy Graphicユーザーズガイド](http://www.cc.kyoto-su.ac.jp/~ogihara/Hg/products/guide0.80.pdf)より引用
+
 ##### 図形の色の指定
 >図形を描くのに使われる色を指定することができます。色はhgcolor型というデータ型で指定しますが、よく使われる色はマクロで定義されています（表１）。
 描かれる線の色を指定するには次の関数を使います。いったん色を指定すると、別の色を指定するまで同じ色が使われます。一度も指定しない場合は黒で描かれます。
@@ -130,7 +132,9 @@ int HgSetColor(hgcolor clr)<br>
 int HgSetFillColor(hgcolor clr)<br>
 <u>引数</u>　   clr:　色の指定<br>
 <u>返り値</u>　 0:　正常、　-1:異常
-<br>・・・・・・・・・・・・・・・・・・・<br>
+<br>・・・・・・・・・・・・・・・・・・・
+
+[Handy Graphicユーザーズガイド](http://www.cc.kyoto-su.ac.jp/~ogihara/Hg/products/guide0.80.pdf)より引用
 
 - 表１：色のマクロ定義
 > |色|マクロ名|色|マクロ名|色|マクロ名|色|マクロ名|
@@ -140,6 +144,7 @@ int HgSetFillColor(hgcolor clr)<br>
 > |灰色|HG_GRAY|青|HG_BLUE|ピンク|HG_PINK|濃緑色|HG_DGREEN
 > |淡灰色|HG_LGRAY|黄|HG_YELLOW|マゼンタ|HG_MAGENTA|濃青色|HG_DBLUE|
 > |濃灰色|HG_DGRAY|紫|HG_PURPLE|茶|HG_BROWN|透明|HG_CLEAR|
+[Handy Graphicユーザーズガイド](http://www.cc.kyoto-su.ac.jp/~ogihara/Hg/products/guide0.80.pdf)より引用
 <br>
 #### 描画関数について
 ##### 長方形
@@ -148,6 +153,8 @@ int HgSetFillColor(hgcolor clr)<br>
 <u>返り値</U>　0: 　正常、  -1:　異常<br>------------------------------------------------------------------------------<br>
 HgBoxFill()は、座標(x,y)を左下隅とする幅w、高さhの塗りつぶされた長方形を描きます。塗りつぶしにはHgSetFillColor()で指定した色が使われます。引数strokeが0の場合は周囲に長方形を描きません。0以外の値(例えば1)の場合、他の線図形と同じ太さ、同じ色の線で長方形を描きます。<br>
 左下隅の座標はウィンドウの外部の点でも構いません。幅と高さは w ≥ 0.0, h ≥ 0.0の実数値です。
+
+[Handy Graphicユーザーズガイド](http://www.cc.kyoto-su.ac.jp/~ogihara/Hg/products/guide0.80.pdf)より引用
 
 ## 座標と変数について
 ![Coordinates and variables](https://user-images.githubusercontent.com/60394438/122274121-2d8abb80-cf1d-11eb-9a67-fb557f011995.png)
