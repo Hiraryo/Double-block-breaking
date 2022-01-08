@@ -119,7 +119,7 @@ int HgSetWidth(double t)<br>
 [Handy Graphicユーザーズガイド](http://www.cc.kyoto-su.ac.jp/~ogihara/Hg/products/guide0.80.pdf)より引用
 
 ##### 図形の色の指定
->図形を描くのに使われる色を指定することができます。色はhgcolor型というデータ型で指定しますが、よく使われる色はマクロで定義されています（[表１]()）。
+>図形を描くのに使われる色を指定することができます。色はhgcolor型というデータ型で指定しますが、よく使われる色はマクロで定義されています（[表１](https://github.com/Hiraryo/Double-block-breaking#%E8%A1%A8%EF%BC%91%E8%89%B2%E3%81%AE%E3%83%9E%E3%82%AF%E3%83%AD%E5%AE%9A%E7%BE%A9)）。
 描かれる線の色を指定するには次の関数を使います。いったん色を指定すると、別の色を指定するまで同じ色が使われます。一度も指定しない場合は黒で描かれます。<br><br>
 int HgSetColor(hgcolor clr)<br>
 <u>引数</u>　 clr:　色の指定<br>
