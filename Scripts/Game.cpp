@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "SDL_image.h"
 
 Game::Game()
 	:window(nullptr)	//初期化子リスト（const変数の初期化）
