@@ -1,12 +1,12 @@
 #include "Game.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	Game game;
-	bool success = game.InitSDL();
+	bool success = game.Initialize();
 	if (success)
 	{
-		game.GameLoop();	//ゲームループ開始
+		game.RunLoop();	//ゲームループ開始
 	}
 	game.Shutdown();
 	return 0;
