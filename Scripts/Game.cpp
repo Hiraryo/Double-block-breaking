@@ -5,7 +5,7 @@ const int thickness = 15;
 const float paddleH = 100.0f;
 
 Game::Game()
-	:mWindow(nullptr)	//‰Šú‰»qƒŠƒXƒgiconst•Ï”‚Ì‰Šú‰»j
+	:mWindow(nullptr)	//åˆæœŸåŒ–å­ãƒªã‚¹ãƒˆï¼ˆconstå¤‰æ•°ã®åˆæœŸåŒ–ï¼‰
 	,mRenderer(nullptr)
 	,mIsRunning(true)
 	,mTicksCount(0)
@@ -13,7 +13,7 @@ Game::Game()
 
 }
 
-bool Game::Initialize()	//‰Šú‰»`¶¬
+bool Game::Initialize()	//åˆæœŸåŒ–ï½ç”Ÿæˆ
 {
 	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0) {
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -50,7 +50,7 @@ bool Game::Initialize()	//‰Šú‰»`¶¬
 	return true;
 }
 
-//ƒQ[ƒ€ƒ‹[ƒv
+//ã‚²ãƒ¼ãƒ ãƒ«ãƒ¼ãƒ—
 void Game::RunLoop()
 {
 	while (mIsRunning)
@@ -61,7 +61,7 @@ void Game::RunLoop()
 	}
 }
 
-//ƒL[“ü—Í
+//ã‚­ãƒ¼å…¥åŠ›
 void Game::ProcessInput()
 {
 	SDL_Event event;
@@ -70,11 +70,11 @@ void Game::ProcessInput()
 		switch (event.type)
 		{
 		case SDLK_RIGHT:
-			//‰E–îˆó
+			//å³çŸ¢å°
 			break;
 
 		case SDLK_LEFT:
-			//¶–îˆó
+			//å·¦çŸ¢å°
 			break;
 
 
@@ -84,15 +84,15 @@ void Game::ProcessInput()
 		}
 	}
 	
-	//I—¹ƒL[‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
-	const Uint8* state = SDL_GetKeyboardState(NULL);	//ƒL[ƒ{[ƒh‘S‘Ì‚Ìó‘Ô‚ğŠi”[‚µ‚½”z—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+	//çµ‚äº†ã‚­ãƒ¼ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+	const Uint8* state = SDL_GetKeyboardState(NULL);	//ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰å…¨ä½“ã®çŠ¶æ…‹ã‚’æ ¼ç´ã—ãŸé…åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
 	if (state[SDL_SCANCODE_ESCAPE])
 	{
-		//ESCƒL[‚ÅI—¹
+		//ESCã‚­ãƒ¼ã§çµ‚äº†
 		mIsRunning = false;
 	}
 
-	//ƒpƒhƒ‹‚ÌˆÊ’u‚ğƒL[“ü—Í‚Å§Œä‚·‚é
+	//ãƒ‘ãƒ‰ãƒ«ã®ä½ç½®ã‚’ã‚­ãƒ¼å…¥åŠ›ã§åˆ¶å¾¡ã™ã‚‹
 	mPaddleDir = 0;
 	if (state[SDL_SCANCODE_W])
 	{
@@ -106,27 +106,27 @@ void Game::ProcessInput()
 
 void Game::UpdateGame()
 {
-	//‘O‚ÌƒtƒŒ[ƒ€‚©‚ç16ms‚ªŒo‰ß‚·‚é‚Ü‚Å‘Ò‚Â
+	//å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã‹ã‚‰16msãŒçµŒéã™ã‚‹ã¾ã§å¾…ã¤
 	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16))
 		;
 
-	//deltatime‚Í‘O‚ÌƒtƒŒ[ƒ€‚Æ‚Ì‚Ì·‚ğ•b‚É•ÏŠ·‚µ‚½’l
+	//deltatimeã¯å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã¨ã®æ™‚åˆ»ã®å·®ã‚’ç§’ã«å¤‰æ›ã—ãŸå€¤
 	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
 
-	//ƒfƒ‹ƒ^ƒ^ƒCƒ€‚ğÅ‘å’l‚Å§ŒÀ‚·‚é
+	//ãƒ‡ãƒ«ã‚¿ã‚¿ã‚¤ãƒ ã‚’æœ€å¤§å€¤ã§åˆ¶é™ã™ã‚‹
 	if (deltaTime > 0.05f)
 	{
 		deltaTime = 0.05f;
 	}
 
-	//‚ğXViŸ‚ÌƒtƒŒ[ƒ€‚Ì‚½‚ß‚Éj
+	//æ™‚åˆ»ã‚’æ›´æ–°ï¼ˆæ¬¡ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®ãŸã‚ã«ï¼‰
 	mTicksCount = SDL_GetTicks();
 
-	//ƒfƒ‹ƒ^ƒ^ƒCƒ€‚ÉŠî‚Ã‚¢‚Äƒpƒhƒ‹‚ğXV‚·‚é
+	//ãƒ‡ãƒ«ã‚¿ã‚¿ã‚¤ãƒ ã«åŸºã¥ã„ã¦ãƒ‘ãƒ‰ãƒ«ã‚’æ›´æ–°ã™ã‚‹
 	if (mPaddleDir != 0)
 	{
 		mPaddlePos.y += mPaddleDir * 300.0f * deltaTime;
-		//ƒpƒhƒ‹‚ª‰æ–Ê‚©‚ço‚È‚¢‚æ‚¤‚É‚·‚é
+		//ãƒ‘ãƒ‰ãƒ«ãŒç”»é¢ã‹ã‚‰å‡ºãªã„ã‚ˆã†ã«ã™ã‚‹
 		if (mPaddlePos.y < (paddleH / 2.0f + thickness))
 		{
 			mPaddlePos.y = paddleH / 2.0f + thickness;
@@ -137,47 +137,47 @@ void Game::UpdateGame()
 		}
 	}
 
-	//ƒ{[ƒ‹‚ÌˆÊ’u‚ğXV‚·‚éBiƒ{[ƒ‹‚ÌˆÊ’u‚ğ‘¬“x‚É‰‚¶‚Ä“®‚©‚·j
+	//ãƒœãƒ¼ãƒ«ã®ä½ç½®ã‚’æ›´æ–°ã™ã‚‹ã€‚ï¼ˆãƒœãƒ¼ãƒ«ã®ä½ç½®ã‚’é€Ÿåº¦ã«å¿œã˜ã¦å‹•ã‹ã™ï¼‰
 	mBallPos.x += mBallVel.x * deltaTime;
 	mBallPos.y += mBallVel.y * deltaTime;
 
-	//•K—v‚É‰‚¶‚ÄƒoƒEƒ“ƒh‚³‚¹‚é
-	//ƒpƒhƒ‹‚ÆŒğ·‚µ‚½‚©
+	//å¿…è¦ã«å¿œã˜ã¦ãƒã‚¦ãƒ³ãƒ‰ã•ã›ã‚‹
+	//ãƒ‘ãƒ‰ãƒ«ã¨äº¤å·®ã—ãŸã‹
 	float diff = mPaddlePos.y - mBallPos.y;
 
-	//·‚Ìâ‘Î’l‚ğæ‚é
+	//å·®ã®çµ¶å¯¾å€¤ã‚’å–ã‚‹
 	diff = (diff > 0.0f) ? diff : -diff;
 	if (
-		//‚à‚µy‚Ì·‚ª\•ª‚É¬‚³‚­
+		//ã‚‚ã—yã®å·®ãŒååˆ†ã«å°ã•ã
 		diff <= paddleH / 2.0f &&
-		//ƒ{[ƒ‹‚ª³‚µ‚¢xˆÊ’u‚É‚ ‚è
+		//ãƒœãƒ¼ãƒ«ãŒæ­£ã—ã„xä½ç½®ã«ã‚ã‚Š
 		mBallPos.x <= 25.0f && mBallPos.x >= 20.0f &&
-		//ƒ{[ƒ‹‚ª¶Œü‚«‚É“®‚¢‚Ä‚¢‚ê‚Î
+		//ãƒœãƒ¼ãƒ«ãŒå·¦å‘ãã«å‹•ã„ã¦ã„ã‚Œã°
 		mBallVel.x < 0.0f)
 	{
 		mBallVel.x *= -1.0f;
 	}
 
-	//ƒ{[ƒ‹‚ª‰æ–Ê‚©‚çÁ‚¦‚½‚Ìˆ—
+	//ãƒœãƒ¼ãƒ«ãŒç”»é¢ã‹ã‚‰æ¶ˆãˆãŸæ™‚ã®å‡¦ç†
 	else if (mBallPos.x <= 0.0f)
 	{
-		//ƒQ[ƒ€I—¹
+		//ã‚²ãƒ¼ãƒ çµ‚äº†
 		mIsRunning = false;
 	}
 
-	//ƒ{[ƒ‹‚ª‰E‚Ì•Ç‚ÉÕ“Ë‚µ‚½‚Æ‚«
+	//ãƒœãƒ¼ãƒ«ãŒå³ã®å£ã«è¡çªã—ãŸã¨ã
 	else if (mBallPos.x >= (1000.0f - thickness) && mBallVel.x > 0.0f)
 	{
 		mBallVel.x *= -1.0f;
 	}
 
-	//ƒ{[ƒ‹‚ªã‚Ì•Ç‚ÉÕ“Ë‚µ‚½‚Æ‚«
+	//ãƒœãƒ¼ãƒ«ãŒä¸Šã®å£ã«è¡çªã—ãŸã¨ã
 	if (mBallPos.y <= thickness && mBallVel.y < 0.0f)
 	{
 		mBallVel.y *= -1;
 	}
 
-	//ƒ{[ƒ‹‚ª‰º‚Ì•Ç‚ÉÕ“Ë‚µ‚½‚Æ‚«
+	//ãƒœãƒ¼ãƒ«ãŒä¸‹ã®å£ã«è¡çªã—ãŸã¨ã
 	else if (mBallPos.y >= (800 - thickness) && mBallVel.y > 0.0f)
 	{
 		mBallVel.y *= -1;
@@ -185,32 +185,32 @@ void Game::UpdateGame()
 }
 void Game::GenerateOutput()
 {
-	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 255);	//ƒoƒbƒtƒ@ƒNƒŠƒAF
-	SDL_RenderClear(mRenderer);	//ƒoƒbƒtƒ@ƒNƒŠƒAF‚Åƒoƒbƒtƒ@‚ğƒNƒŠƒA
+	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 255);	//ãƒãƒƒãƒ•ã‚¡ã‚¯ãƒªã‚¢è‰²
+	SDL_RenderClear(mRenderer);	//ãƒãƒƒãƒ•ã‚¡ã‚¯ãƒªã‚¢è‰²ã§ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢
 	
-	SDL_SetRenderDrawColor(mRenderer, 255, 0, 0, 255);	//•Ç‚ğ•`‰æ
+	SDL_SetRenderDrawColor(mRenderer, 255, 0, 0, 255);	//å£ã‚’æç”»
 	
-	//‰æ–Êã‚Ì•Ç
+	//ç”»é¢ä¸Šã®å£
 	SDL_Rect wall{
-		0,			//¶ã‹÷‚Ìx
-		0,			//¶ã‹÷‚Ìy
-		1000,		//•
-		thickness	//‚‚³
+		0,			//å·¦ä¸Šéš…ã®x
+		0,			//å·¦ä¸Šéš…ã®y
+		1000,		//å¹…
+		thickness	//é«˜ã•
 	};
-	SDL_RenderFillRect(mRenderer, &wall);	//’·•ûŒ`‚ğ•`‚­iSDL_RectŒ^‚Ì•Ç‚ğƒ|ƒCƒ“ƒ^‚Å“n‚·j
+	SDL_RenderFillRect(mRenderer, &wall);	//é•·æ–¹å½¢ã‚’æãï¼ˆSDL_Rectå‹ã®å£ã‚’ãƒã‚¤ãƒ³ã‚¿ã§æ¸¡ã™ï¼‰
 
-	//‰æ–Ê‰º‚Ì•Ç
+	//ç”»é¢ä¸‹ã®å£
 	wall.y = 800 - thickness;
 	SDL_RenderFillRect(mRenderer, &wall);
 
-	//‰æ–Ê‰E‚Ì•Ç
+	//ç”»é¢å³ã®å£
 	wall.x = 1000 - thickness;
 	wall.y = 0;
 	wall.w = thickness;
 	wall.h = 1000;
 	SDL_RenderFillRect(mRenderer, &wall);
 
-	//ƒpƒhƒ‹‚ğ•`‰æ
+	//ãƒ‘ãƒ‰ãƒ«ã‚’æç”»
 	SDL_Rect paddle{
 		static_cast<int>(mPaddlePos.x),
 		static_cast<int>(mPaddlePos.y - paddleH / 2),
@@ -219,19 +219,19 @@ void Game::GenerateOutput()
 	};
 	SDL_RenderFillRect(mRenderer, &paddle);
 
-	//ƒ{[ƒ‹‚ğ•`‰æ
+	//ãƒœãƒ¼ãƒ«ã‚’æç”»
 	SDL_Rect ball{
-		static_cast<int>(mBallPos.x - thickness / 2),	//static_cast<int>‚ÅAfloat‚©‚çint®”‚É•ÏŠ·‚·‚éBiSDL_Rect‚Íint‚ğg‚¤‚½‚ßj
+		static_cast<int>(mBallPos.x - thickness / 2),	//static_cast<int>ã§ã€floatã‹ã‚‰intæ•´æ•°ã«å¤‰æ›ã™ã‚‹ã€‚ï¼ˆSDL_Rectã¯intã‚’ä½¿ã†ãŸã‚ï¼‰
 		static_cast<int>(mBallPos.y - thickness / 2),
 		thickness,
 		thickness
 	};
 	SDL_RenderFillRect(mRenderer, &ball);
 
-	SDL_RenderPresent(mRenderer);	//ƒoƒbƒtƒ@Ø‚è‘Ö‚¦iƒoƒbƒNƒoƒbƒtƒ@‚Ìî•ñ‚ğƒtƒƒ“ƒgƒoƒbƒtƒ@‚É•`‰æj
+	SDL_RenderPresent(mRenderer);	//ãƒãƒƒãƒ•ã‚¡åˆ‡ã‚Šæ›¿ãˆï¼ˆãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã®æƒ…å ±ã‚’ãƒ•ãƒ­ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã«æç”»ï¼‰
 }
 
-//ƒQ[ƒ€I—¹ˆ—
+//ã‚²ãƒ¼ãƒ çµ‚äº†å‡¦ç†
 void Game::Shutdown()
 {
 	IMG_Quit();
