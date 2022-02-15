@@ -24,7 +24,7 @@ private:
 	bool mIsRunning;
 
 	int mPaddleDir;
-	Vector2 mPaddlePos;
+	Vector2 mPaddlePos[2];
 	Vector2 mBallPos;
 	Vector2 mBallVel;
 };

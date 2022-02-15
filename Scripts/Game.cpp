@@ -1,8 +1,11 @@
 #include "Game.h"
 #include "SDL_image.h"
 
-const int thickness = 15;
-const float paddleH = 100.0f;
+const int WALL_BREADTH = 20;
+const int WINDOW_WIDTH = 1000.0f;
+const int WINDOW_HEIGHT = 800.0f;
+const int PADDLE_WIDTH = 150.0f;
+const int PADDLE_HEIGHT = 20.0f;
 
 Game::Game()
 	:mWindow(nullptr)	//初期化子リスト（const変数の初期化）
@@ -40,8 +43,9 @@ bool Game::Initialize()	//初期化～生成
 		return false;
 	}
 
-	mPaddlePos.x = 10.0f;
-	mPaddlePos.y = 768.0f / 2.0f;
+	mPaddlePos[0].x = mPaddlePos[1].x = (WINDOW_WIDTH / 2.0f) - (PADDLE_WIDTH / 2.0f);
+	mPaddlePos[0].y = WINDOW_HEIGHT - PADDLE_HEIGHT * 2;
+	mPaddlePos[1].y = 30.0f;
 	mBallPos.x = 1000.0f / 2.0f;
 	mBallPos.y = 800.0f / 2.0f;
 	mBallVel.x = -200.0f;
@@ -69,15 +73,6 @@ void Game::ProcessInput()
 	{
 		switch (event.type)
 		{
-		case SDLK_RIGHT:
-			//右矢印
-			break;
-
-		case SDLK_LEFT:
-			//左矢印
-			break;
-
-
 		case SDL_QUIT:
 			mIsRunning = false;
 			break;
@@ -94,138 +89,120 @@ void Game::ProcessInput()
 
 	//パドルの位置をキー入力で制御する
 	mPaddleDir = 0;
-	if (state[SDL_SCANCODE_W])
+	if (state[SDL_SCANCODE_LEFT])
 	{
-		mPaddleDir -= 1;
+		mPaddleDir = -1;
 	}
-	if (state[SDL_SCANCODE_S])
+	if (state[SDL_SCANCODE_RIGHT])
 	{
-		mPaddleDir += 1;
+		mPaddleDir = 1;
 	}
 }
 
 void Game::UpdateGame()
 {
-	//前のフレームから16msが経過するまで待つ
 	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16))
 		;
 
-	//deltatimeは前のフレームとの時刻の差を秒に変換した値
 	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
 
-	//デルタタイムを最大値で制限する
 	if (deltaTime > 0.05f)
 	{
 		deltaTime = 0.05f;
 	}
 
-	//時刻を更新（次のフレームのために）
 	mTicksCount = SDL_GetTicks();
 
-	//デルタタイムに基づいてパドルを更新する
+	//パドルの処理
 	if (mPaddleDir != 0)
 	{
-		mPaddlePos.y += mPaddleDir * 300.0f * deltaTime;
-		//パドルが画面から出ないようにする
-		if (mPaddlePos.y < (paddleH / 2.0f + thickness))
+		mPaddlePos[0].x += mPaddleDir * 20.0f;
+		mPaddlePos[1].x -= mPaddleDir * 20.0f;
+		//パドルを画面外に出さないようにする
+		//HACK:パドルの数が変わっても対応できるような書き方に修正する。
+		if (mPaddlePos[0].x < WALL_BREADTH)
 		{
-			mPaddlePos.y = paddleH / 2.0f + thickness;
+			mPaddlePos[0].x = WALL_BREADTH;
 		}
-		else if (mPaddlePos.y > (800.0f - paddleH/2.0f - thickness))
+		if (mPaddlePos[1].x < WALL_BREADTH)
 		{
-			mPaddlePos.y = 800.0f - paddleH / 2.0f - thickness;
+			mPaddlePos[1].x = WALL_BREADTH;
+		}
+		if (mPaddlePos[0].x > WINDOW_WIDTH - PADDLE_WIDTH - WALL_BREADTH)
+		{
+			mPaddlePos[0].x = WINDOW_WIDTH - PADDLE_WIDTH - WALL_BREADTH;
+		}
+		if (mPaddlePos[1].x > WINDOW_WIDTH - PADDLE_WIDTH - WALL_BREADTH)
+		{
+			mPaddlePos[1].x = WINDOW_WIDTH - PADDLE_WIDTH - WALL_BREADTH;
 		}
 	}
 
-	//ボールの位置を更新する。（ボールの位置を速度に応じて動かす）
+	//ボールの処理
 	mBallPos.x += mBallVel.x * deltaTime;
 	mBallPos.y += mBallVel.y * deltaTime;
 
-	//必要に応じてバウンドさせる
-	//パドルと交差したか
-	float diff = mPaddlePos.y - mBallPos.y;
-
-	//差の絶対値を取る
-	diff = (diff > 0.0f) ? diff : -diff;
-	if (
-		//もしyの差が十分に小さく
-		diff <= paddleH / 2.0f &&
-		//ボールが正しいx位置にあり
-		mBallPos.x <= 25.0f && mBallPos.x >= 20.0f &&
-		//ボールが左向きに動いていれば
-		mBallVel.x < 0.0f)
+	//壁とボールの当たり判定
+	if (mBallPos.x < WALL_BREADTH || mBallPos.x > WINDOW_WIDTH - WALL_BREADTH - 15.0f) 
 	{
 		mBallVel.x *= -1.0f;
 	}
 
-	//ボールが画面から消えた時の処理
-	else if (mBallPos.x <= 0.0f)
+	//上のパドルとボールの当たり判定
+	//FIXME: ボールがパドルより上に行ったときに、パドルを合わせると当たり判定されてしまうのを修正
+	if (mBallPos.y < mPaddlePos[1].y + 15.0f)
 	{
-		//ゲーム終了
+		if (mBallPos.x > mPaddlePos[1].x && mBallPos.x < mPaddlePos[1].x + PADDLE_WIDTH)
+		{
+			mBallVel.y *= -1.0f;
+		}
+	}
+
+	//下のパドルとボールの当たり判定
+	//FIXME: ボールがパドルより下に行ったときに、パドルを合わせると当たり判定されてしまうのを修正
+	if (mBallPos.y + 15.0f > mPaddlePos[0].y)
+	{
+		if (mBallPos.x > mPaddlePos[0].x && mBallPos.x < mPaddlePos[0].x + PADDLE_WIDTH - 15.0f)
+		{
+			mBallVel.y *= -1.0f;
+		}
+	}
+
+	//ボールが画面の外に出たら、ゲーム終了
+	if (mBallPos.y + 15.0f < 0 || mBallPos.y > WINDOW_HEIGHT + 15.0f)
+	{
 		mIsRunning = false;
 	}
-
-	//ボールが右の壁に衝突したとき
-	else if (mBallPos.x >= (1000.0f - thickness) && mBallVel.x > 0.0f)
-	{
-		mBallVel.x *= -1.0f;
-	}
-
-	//ボールが上の壁に衝突したとき
-	if (mBallPos.y <= thickness && mBallVel.y < 0.0f)
-	{
-		mBallVel.y *= -1;
-	}
-
-	//ボールが下の壁に衝突したとき
-	else if (mBallPos.y >= (800 - thickness) && mBallVel.y > 0.0f)
-	{
-		mBallVel.y *= -1;
-	}
 }
+
 void Game::GenerateOutput()
 {
 	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 255);	//バッファクリア色
 	SDL_RenderClear(mRenderer);	//バッファクリア色でバッファをクリア
 	
 	SDL_SetRenderDrawColor(mRenderer, 255, 0, 0, 255);	//壁を描画
-	
-	//画面上の壁
-	SDL_Rect wall{
-		0,			//左上隅のx
-		0,			//左上隅のy
-		1000,		//幅
-		thickness	//高さ
-	};
-	SDL_RenderFillRect(mRenderer, &wall);	//長方形を描く（SDL_Rect型の壁をポインタで渡す）
 
-	//画面下の壁
-	wall.y = 800 - thickness;
+	//画面左の壁
+	SDL_Rect wall{ 0, 0, WALL_BREADTH, WINDOW_HEIGHT };
 	SDL_RenderFillRect(mRenderer, &wall);
 
 	//画面右の壁
-	wall.x = 1000 - thickness;
+	wall.x = WINDOW_WIDTH - WALL_BREADTH;
 	wall.y = 0;
-	wall.w = thickness;
-	wall.h = 1000;
+	wall.w = WALL_BREADTH;
+	wall.h = WINDOW_HEIGHT;
 	SDL_RenderFillRect(mRenderer, &wall);
 
+
 	//パドルを描画
-	SDL_Rect paddle{
-		static_cast<int>(mPaddlePos.x),
-		static_cast<int>(mPaddlePos.y - paddleH / 2),
-		thickness,
-		static_cast<int>(paddleH)
-	};
-	SDL_RenderFillRect(mRenderer, &paddle);
+	SDL_SetRenderDrawColor(mRenderer, 255, 255, 0, 255);
+	SDL_Rect paddle1{ mPaddlePos[0].x, mPaddlePos[0].y, PADDLE_WIDTH, PADDLE_HEIGHT };
+	SDL_Rect paddle2{ mPaddlePos[1].x, mPaddlePos[1].y, PADDLE_WIDTH, PADDLE_HEIGHT };
+	SDL_RenderFillRect(mRenderer, &paddle1);
+	SDL_RenderFillRect(mRenderer, &paddle2);
 
 	//ボールを描画
-	SDL_Rect ball{
-		static_cast<int>(mBallPos.x - thickness / 2),	//static_cast<int>で、floatからint整数に変換する。（SDL_Rectはintを使うため）
-		static_cast<int>(mBallPos.y - thickness / 2),
-		thickness,
-		thickness
-	};
+	SDL_Rect ball{ mBallPos.x, mBallPos.y, 15.0f, 15.0f };
 	SDL_RenderFillRect(mRenderer, &ball);
 
 	SDL_RenderPresent(mRenderer);	//バッファ切り替え（バックバッファの情報をフロントバッファに描画）
