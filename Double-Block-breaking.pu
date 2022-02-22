@@ -1,0 +1,77 @@
+@startuml
+'タイトル画面に関する処理
+class TitleScreen{
+    -InitializeTheScreen():bool
+}
+
+'ゲームクリア画面に関する処理
+class GameClearScreen{
+    -InitializeTheScreen():bool
+}
+
+'ゲームオーバー画面に関する処理
+class GameOverScreen{
+    -InitializeTheScreen():bool
+}
+
+'ゲームデータの管理を行う
+class GameDataManager{
+    -m_score:int
+    -m_playCount:int
+    +InitializeTheGameData():bool
+}
+
+'ゲームの進行を管理する
+class GameManager{
+    -Start():void
+    -Update():void
+}
+
+'パドルに関する処理
+class Paddle{
+    -m_moveSpeed:float
+    +Initialize():bool
+    -PaddleMove():void
+}
+
+'ボールに関する処理
+class Ball{
+    -m_ballRadius:int
+    +Initialize():bool
+    -BallMove():void
+}
+
+'ブロック自体の処理
+class Block{
+    -BLOCK_WIDTH:int
+    -BLOCK_HEIGHT:int
+    -m_numberOfBlocks:int
+    +InitializeTheBlock():bool
+}
+
+'描画に関する処理
+class Draw{
+    +Generate(const *rendere):void
+}
+
+'当たり判定の処理
+class HitCheaker{
+    +HitCheak():bool
+}
+
+'ゲームオーバーになったときの処理
+class GameOver{
+
+}
+
+'ゲームクリアになったときの処理
+class GameClear{
+
+}
+
+'プレイデータに関する処理
+class PlayDataManager{
+    -SaveData():bool
+    -DeleteData():bool
+}
+@enduml

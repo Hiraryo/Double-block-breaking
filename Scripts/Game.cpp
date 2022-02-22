@@ -1,11 +1,16 @@
 #include "Game.h"
 #include "SDL_image.h"
+#include <math.h>
+#include <stdio.h>
 
 const int WALL_BREADTH = 20;
-const int WINDOW_WIDTH = 1000.0f;
-const int WINDOW_HEIGHT = 800.0f;
-const int PADDLE_WIDTH = 150.0f;
-const int PADDLE_HEIGHT = 20.0f;
+const int WINDOW_WIDTH = 1000;
+const int WINDOW_HEIGHT = 800;
+const int PADDLE_WIDTH = 150;
+const int PADDLE_HEIGHT = 20;
+const int BLOCK_WIDTH = 10;
+const int BLOCK_HEIGHT = 3;
+const int BALL_SIZE = 15;
 
 Game::Game()
 	:mWindow(nullptr)	//初期化子リスト（const変数の初期化）
@@ -141,16 +146,18 @@ void Game::UpdateGame()
 	//ボールの処理
 	mBallPos.x += mBallVel.x * deltaTime;
 	mBallPos.y += mBallVel.y * deltaTime;
+	
 
+	a = atan2(mBallPos.y, mBallPos.x);
 	//壁とボールの当たり判定
-	if (mBallPos.x < WALL_BREADTH || mBallPos.x > WINDOW_WIDTH - WALL_BREADTH - 15.0f) 
+	if (mBallPos.x < WALL_BREADTH || mBallPos.x > WINDOW_WIDTH - WALL_BREADTH - BALL_SIZE) 
 	{
 		mBallVel.x *= -1.0f;
 	}
 
 	//上のパドルとボールの当たり判定
 	//FIXME: ボールがパドルより上に行ったときに、パドルを合わせると当たり判定されてしまうのを修正
-	if (mBallPos.y < mPaddlePos[1].y + 15.0f)
+	if (mBallPos.y < mPaddlePos[1].y + PADDLE_HEIGHT && mBallPos.y + BALL_SIZE > mPaddlePos[1].y)
 	{
 		if (mBallPos.x > mPaddlePos[1].x && mBallPos.x < mPaddlePos[1].x + PADDLE_WIDTH)
 		{
@@ -160,16 +167,22 @@ void Game::UpdateGame()
 
 	//下のパドルとボールの当たり判定
 	//FIXME: ボールがパドルより下に行ったときに、パドルを合わせると当たり判定されてしまうのを修正
-	if (mBallPos.y + 15.0f > mPaddlePos[0].y)
+	if (mBallPos.y + BALL_SIZE > mPaddlePos[0].y)
 	{
-		if (mBallPos.x > mPaddlePos[0].x && mBallPos.x < mPaddlePos[0].x + PADDLE_WIDTH - 15.0f)
+		mBallVel.y *= -1.0f;
+	}
+	/*
+	if (mBallPos.x > mPaddlePos[0].x && mBallPos.x < mPaddlePos[0].x + PADDLE_WIDTH - BALL_SIZE)
+	{
+		if (mBallPos.y + BALL_SIZE > mPaddlePos[0].y && mBallPos.y < mPaddlePos[0].y + PADDLE_HEIGHT)
 		{
 			mBallVel.y *= -1.0f;
 		}
 	}
+	*/
 
 	//ボールが画面の外に出たら、ゲーム終了
-	if (mBallPos.y + 15.0f < 0 || mBallPos.y > WINDOW_HEIGHT + 15.0f)
+	if (mBallPos.y + BALL_SIZE < 0 || mBallPos.y > WINDOW_HEIGHT + BALL_SIZE)
 	{
 		mIsRunning = false;
 	}

@@ -11,6 +11,7 @@ class Game {
 public:
 	Game();
 	bool Initialize();
+	bool HitCheck();
 	void RunLoop();
 	void Shutdown();
 
@@ -24,7 +25,9 @@ private:
 	bool mIsRunning;
 
 	int mPaddleDir;
+	double a;
 	Vector2 mPaddlePos[2];
 	Vector2 mBallPos;
 	Vector2 mBallVel;
+	bool ball_f;
 };

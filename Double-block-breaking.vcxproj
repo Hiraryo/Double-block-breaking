@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Scripts\Game.cpp" />
+    <ClCompile Include="Scripts\GameManager.cpp" />
     <ClCompile Include="Scripts\Main.cpp" />
+    <ClCompile Include="Scripts\Paddle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scripts\Game.h" />
+    <ClInclude Include="Scripts\GameManager.h" />
+    <ClInclude Include="Scripts\Paddle.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

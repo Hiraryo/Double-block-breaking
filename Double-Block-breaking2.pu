@@ -1,0 +1,56 @@
+@startuml
+class Paddle{
+    -m_speed:float
+    -PADDLE_WIDTH:int
+    -PADDLE_HEIGHT:int
+    +Move():void
+}
+
+class Block{
+    -m_blockState:bool
+    -BLOCK_WIDTH:int
+    -BLOCK_HEIGHT:int
+    +Destroy():void
+}
+
+class Ball{
+    -m_speed:float
+    -BALL_RADIUS:float
+    +Move():void
+}
+
+class PlayerDataManager{
+    -m_score:int
+    -m_playCount:int
+    +LoadPlayerData():bool
+    +SavePlayerData():bool
+    +ScoreCalculation():int
+    +PlayCountCalculation():int
+}
+
+class GameManager{
+    +GameStart():void
+    +GameEnd():void
+    +GameClear():void
+    +GameOver():void
+}
+
+class HitChecker{
+    +HitCheck():bool
+}
+
+class Drawing{
+    +Draw():void
+}
+
+class PlayerInput{
+    +Input():void
+}
+
+class Sound{
+    -m_soundName:string
+    +BGMPlay():bool
+    +BGMStop():bool
+    +SEPlay():bool
+}
+@enduml

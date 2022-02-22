@@ -1,13 +1,13 @@
-#include "Game.h"
+#include "GameManager.h"
 
 int main(int argc, char *argv[])
 {
-	Game game;
-	bool success = game.Initialize();
+	GameManager gameManager;
+	bool success = gameManager.Initialize();
 	if (success)
 	{
-		game.RunLoop();	//ゲームループ開始
+		gameManager.GameStart();	//ゲーム開始
 	}
-	game.Shutdown();
+	gameManager.GameEnd();
 	return 0;
 }
