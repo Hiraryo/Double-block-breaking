@@ -3,14 +3,13 @@
  * このソースコードはエンディングのプログラムです。
  * このファイルをコンパイルする際は、
  * $ hgcc -o ending ending.c
- * としてください。(そうしないとゲームを正常に読み込むことができません)
+ * としてください。
  * (注)このゲームを始めるには、title.cから実行してください。
  **/
 #include <stdio.h>
 #include <handy.h>
 #include <stdlib.h>
-#include "define.h"
-
+#include "blockGame.h"
 
 doubleLayer layers;
 
@@ -23,7 +22,7 @@ int result;
 
 
 int main(){
-    windowID = HgOpen(WIDTH,HEIGHT);
+    windowID = HgOpen(WINDOW_WIDTH,WINDOW_HEIGHT);
     soundID_1 = HgSoundLoad("../Sounds/9351.mp3");
     layers = HgWAddDoubleLayer(windowID);
     int image_1 = HgImageLoad("../Graphics/ending.png");
@@ -49,12 +48,12 @@ int main(){
                         case ' ': 
                             if (txt_y >= 830) {
                                 HgSoundStop(soundID_1);
-                                HgClose();result = system(program);
+                                HgCloseAll();result = system(program);
                                 return 0;
                             }
                             break;
                         case 'q':
-                            HgClose();
+                            HgCloseAll();
                             return 0;
                         default:   continue;
                     }

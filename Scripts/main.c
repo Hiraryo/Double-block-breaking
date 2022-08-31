@@ -1,332 +1,388 @@
 /**
  * このゲームはブロック崩しです。
  * このソースコードはゲームのメインプログラムです。
- * ゲームを始めるたびに、ブロックの配置が変わります。
- * このファイルをコンパイルする際は、
+ * このプログラムのコンパイル方法は、
  * $ hgcc -o main main.c
- * としてください。(そうしないとゲームを正常に読み込むことができません)
- * (注)このゲームを始めるには、title.cから実行してください。
+ * です。
  */
 #include <stdio.h>
 #include <handy.h>
 #include <stdlib.h>
-#include <time.h>       //time関数を使うために必要
-#include "define.h"
+#include <time.h>
+#include <math.h>
+#include "blockGame.h"
 
-/*----------------------関数プロトタイプ宣言----------------------*/
-int bar_ball_move(void);    //バーとボールを動かす関数
-int game_clear(void);       //ゲームクリア関数
-int game_over(void);        //ゲームオーバー関数
-int stage_data_select(void); //ステージデータ選択関数
-int stage_data_load(void);  //ステージデータを読み込む関数
-/*------------------------------------------------------------*/
+FILE *fp;
+doubleLayer game_doubleLayer; //ダブルレイヤの変数を宣言する
 
-doubleLayer layers; //(1)ダブルレイヤの変数を宣言する
-doubleLayer layers_ball; //残機のレイヤー
-doubleLayer layers_block;   //ブロックのレイヤー
-int soundID_1;  //メインBGM
-int soundID_2;  //クリアBGM
-int soundID_3;  //ゲームオーバーBGM
-int SE_1;       //効果音(ボールとブロックが当たったときの音)
-int SE_2;       //効果音(ボールとバーが当たったときの音)
-int windowID;   //ウィンドウの番号
-int layerID;    //レイヤーの番号
-int layerID_block;
-int block_x = 110, block_y = HEIGHT - 50;    //ブロックの左下座標(x,y)
-int i,j;        //ブロックを表示するためのカウント変数
-int block_num;//ブロックの数
-int bar_x_up = 670,bar_y_up = 750;    //バー(上)の左下X,Y座標
-int bar_x_down = 0,bar_y_down = 100;  //バー(下)の左下X,Y座標
-int bar_w = 130, bar_h = 20;   //バーの幅と高さ
-int ball_x = 200, ball_y = 300;//ボールのX座標とY座標
-int ball_dx = 8, ball_dy = 8;//ボールの移動量Xと移動量Y
-int ball_r = 16;   //ボールの半径(ball_rの値はball_dx , ball_dyの値の倍数)
-int ball_zanki = 2; //ボール残機の初期値(この場合の残機数は３つ)
-int score = 0;  //スコア
-int block_no = 6;   //ブロックの段数(6x6)
-int block_space_w = 20;  //ブロックとブロックの間隔(左右)
-int block_space_h = 10;   //ブロックとブロックの間隔(上下)
-int block_line_x = 0;
-int block_line_y = 0;   //ブロックの何行目か
-int block_dis_y = 0;    //block_dis_yからどれくらい離れているか
 char program[] = "./title";
 char program2[] = "./ending";
+
+int ball_zanki = 3;         //ボール残機数
+int soundID_1;     //メインBGM
+int soundID_2;     //クリアBGM
+int soundID_3;     //ゲームオーバーBGM
+int SE_1;          //効果音(ボールとブロックが当たったときの音)
+int SE_2;          //効果音(ボールとバーが当たったときの音)
+int mainWid;       //メインウィンドウid
+int block_num;     //ブロックの数
+int score = 0;     //スコア
 int result;
 int mes_win;
-int block_array[6][6];
-FILE *fp;
-int stage_no;
+int background_image;
+int block_layer,   //ブロックのレイヤー
+    player_info_layer, //残機数やスコアを表示するレイヤー
+    game_layer,    //ボールやパドルを表示するレイヤー
+    game_start_layer;
+struct BALL ball[2];
+struct PADDLE paddle[2];
+struct BLOCK block[6][6];
 
 int main(void){
+    
     srand(time(NULL));
-    stage_data_select();    //ステージデータを選択
-    stage_data_load();  //ステージデータを読み込む
-    windowID = HgOpen(WIDTH,HEIGHT);
+    //SelectStageData();    //ステージデータを選択
+    LoadStageData();      //ステージデータを読み込む
+    mainWid = HgOpen(WINDOW_WIDTH,WINDOW_HEIGHT);
+    background_image = HgImageLoad("../Graphics/main1.png");    //ステージ背景
     soundID_1 = HgSoundLoad("../Sounds/9254.mp3");//ステージBGM
     soundID_2 = HgSoundLoad("../Sounds/Clear1.mp3");//クリア音
     soundID_3 = HgSoundLoad("../Sounds/GAMEOVER.mp3");//ゲームオーバーBGM
-    SE_1 = HgSoundLoad("../Sounds/bound.mp3");
+    SE_1 = HgSoundLoad("../Sounds/bound1.mp3");
     SE_2 = HgSoundLoad("../Sounds/bound2.mp3");
     HgSetEventMask(HG_KEY_DOWN);    //キー入力のみを検出する
-    layers = HgWAddDoubleLayer(windowID);  //(2)ダブルレイヤを作成する
-    layers_block = HgWAddDoubleLayer(windowID);  //(2)ダブルレイヤを作成する
     HgSoundVolume(soundID_1,1.0,1);
     HgSoundVolume(soundID_2,1.0,0);
     HgSoundVolume(soundID_3,1.0,0);
-    HgSoundVolume(SE_1,0.8,0);
-    HgSoundVolume(SE_2,0.8,0);
+    HgSoundVolume(SE_1,0.5,0);
+    HgSoundVolume(SE_2,0.5,0);
     HgSoundPlay(soundID_1);
-    bar_ball_move();    //バーとボールを動かす関数
+
+    player_info_layer = HgWAddLayer(mainWid);
+    game_start_layer = HgWAddLayer(mainWid);
+    block_layer = HgWAddLayer(mainWid);
+    game_doubleLayer = HgWAddDoubleLayer(mainWid);
+    
+    Initialize();
+    HgWImageDraw(mainWid,0,0,background_image); //背景画像
+    DrawBlock();
+    DrawPlayerInfo();
+    DrawBall_Paddle();
+    MainLoop();
     return 0;
 }
-int stage_data_select(){
-    stage_no = rand() % 5;
-    stage_no += 1;
-    switch (stage_no){
-        case 1:
-        fp=fopen("../StageDatas/stage1.dat","r");
-        break;
+/*
+//読み込むステージデータを決める
+int SelectStageData(void){
+    
+}
+*/
 
-        case 2:
-        fp=fopen("../StageDatas/stage2.dat","r");
-        break;
-
-        case 3:
-        fp=fopen("../StageDatas/stage3.dat","r");
-        break;
-
-        case 4:
-        fp=fopen("../StageDatas/stage4.dat","r");
-        break;
-
-        case 5:
-        fp=fopen("../StageDatas/stage5.dat","r");
-        break;
-    }
-    if(fp==NULL){
-        mes_win = HgAlert("ステージデータを正常に読み込むことが出来なかったので、アプリケーションを終了しました。","OK",NULL,NULL);
+//ステージデータを読み込む
+int LoadStageData(void){
+    for(int y=0; y<6; y++){
+        for(int x=0; x<6; x++){
+            block[y][x].Visible = 1;
+        }
     }
     return 0;
 }
 
-int stage_data_load(){
-    for(i = 0; i < block_no; i ++){
-        for(j = 0; j < block_no; j ++){
-            fscanf(fp,"%d",&block_array[i][j]);
-            if (block_array[i][j] == 1){
+void Initialize(void){
+    ball[0].R = 10;
+    ball[1].R = 10;
+    paddle[0].W = 130, paddle[0].H = 10;
+    paddle[1].W = 130, paddle[1].H = 10;
+    paddle[0].X = (GAME_SCREEN_WIDTH-paddle[0].W) / 2, paddle[0].Y = 700;
+    paddle[1].X = (GAME_SCREEN_WIDTH-paddle[1].W) / 2, paddle[1].Y = 100;
+    ball[0].Speed = 8;
+    ball[1].Speed = 7;
+    block_num = 1;
+    ball[0].X = rand() % GAME_SCREEN_WIDTH, ball[0].Y = 300;
+    ball[1].X = rand() % GAME_SCREEN_WIDTH, ball[1].Y = 300;
+    ball[0].DirX = (rand() % 2) ? ball[0].Speed:-ball[0].Speed, ball[0].DirY = ball[0].Speed;
+    ball[1].DirX = (rand() % 2) ? ball[1].Speed:-ball[1].Speed, ball[1].DirY = ball[1].Speed;
+}
+
+//スコアや残機数を描画
+void DrawPlayerInfo(void){
+    int loop = 0;
+    HgLClear(player_info_layer);
+    
+    HgWSetWidth(player_info_layer,7.0);                                       //線の太さを定義
+    HgWSetColor(player_info_layer,HG_ORANGE);                                 //線の色を定義
+    HgWLine(player_info_layer,GAME_SCREEN_WIDTH,0,GAME_SCREEN_WIDTH,WINDOW_HEIGHT);                //線を描画
+    HgWSetFillColor(player_info_layer,HG_GRAY);                               //スコアを表示する背景をグレーに設定
+    HgWBoxFill(player_info_layer,GAME_SCREEN_WIDTH,0,WINDOW_WIDTH - GAME_SCREEN_WIDTH,WINDOW_HEIGHT,0);   //スコアを表示する背景をグレーで塗りつぶす
+    HgWSetColor(player_info_layer,HG_BLACK);                                  //文字の色を黒に設定
+    HgWSetFont(player_info_layer,HG_M,20);                                    //文字のフォントを明朝、フォントサイズを20に設定
+    HgWText(player_info_layer,GAME_SCREEN_WIDTH + 20,WINDOW_HEIGHT - 100,"SCORE : %d",score);        //「SCORE」の文字を描画
+    HgWText(player_info_layer,GAME_SCREEN_WIDTH + 20,WINDOW_HEIGHT - 300,"残り : ");            //「残り」の文字を描画
+    HgWSetFillColor(player_info_layer,HG_YELLOW);                             //黄色に設定
+    HgWSetWidth(player_info_layer,1.0);                                       //線の太さを定義
+    while (loop < ball_zanki)
+    {
+        HgWCircleFill(player_info_layer,GAME_SCREEN_WIDTH + 50+(loop*50),WINDOW_HEIGHT - 340,ball[0].R,1);   //ボールの残機数を表示
+        loop++;
+    }
+    HgWText(player_info_layer,GAME_SCREEN_WIDTH + 20,WINDOW_HEIGHT - 500,"Fキーで左へ移動");
+    HgWText(player_info_layer,GAME_SCREEN_WIDTH + 20,WINDOW_HEIGHT - 550,"Jキーで右へ移動");
+    HgWText(player_info_layer,GAME_SCREEN_WIDTH + 20,WINDOW_HEIGHT - 700,"Qキーで終了");
+}
+
+//ゲームの進行状態の文字を描画
+void DrawScreenText(int state){
+    HgLClear(game_start_layer);
+    
+    switch (state)
+    {
+    case 0:
+        HgWSetFont(game_start_layer,HG_M,80);
+        HgWSetFillColor(game_start_layer,HgRGBA(0.5, 0.5, 0, 0.5)); //オレンジ
+        HgWBoxFill(game_start_layer,0,WINDOW_HEIGHT/3,GAME_SCREEN_WIDTH-4,WINDOW_HEIGHT/3,1);
+        HgWSetColor(game_start_layer, HgRGBA(1.0, 1.0, 1.0, 0.5));
+        HgWText(game_start_layer, GAME_SCREEN_WIDTH/7, WINDOW_HEIGHT/3+100, "ゲーム開始！！");
+        break;
+    
+    case 1:
+        HgWSetFont(game_start_layer,HG_M,80);
+        HgWSetFillColor(game_start_layer,HgRGBA(0.8, 0.8, 0.0, 0.6)); //黄色
+        HgWBoxFill(game_start_layer,0,WINDOW_HEIGHT/3,GAME_SCREEN_WIDTH-4,WINDOW_HEIGHT/3,1);
+        HgWSetColor(game_start_layer, HgRGB(0.1, 0.1, 0.1));
+        HgWText(game_start_layer, GAME_SCREEN_WIDTH/8, WINDOW_HEIGHT/3+100, "ゲームクリア！！");
+        HgWSetFont(game_start_layer,HG_M,30);
+        HgWText(game_start_layer, GAME_SCREEN_WIDTH/5, WINDOW_HEIGHT/3+40, "スペースキーを押してタイトルへ");
+        break;
+
+    case 2:
+        HgWSetFont(game_start_layer,HG_M,60);
+        HgWSetFillColor(game_start_layer,HgRGBA(0.0,0.0,0.0,0.9)); //グレー
+        HgWBoxFill(game_start_layer,0,WINDOW_HEIGHT/3,GAME_SCREEN_WIDTH-4,WINDOW_HEIGHT/3,1);
+        HgWSetColor(game_start_layer, HG_WHITE);
+        HgWText(game_start_layer, GAME_SCREEN_WIDTH/6, WINDOW_HEIGHT/3+100, "Game Over（ ;  ; ）");
+        HgWSetFont(game_start_layer,HG_M,30);
+        HgWText(game_start_layer, GAME_SCREEN_WIDTH/5, WINDOW_HEIGHT/3+40, "スペースキーを押してタイトルへ");
+        break;
+
+    default:
+        break;
+    }
+}
+
+//ブロックを描画
+void DrawBlock(void){
+    int x,y = 0;
+    HgLClear(block_layer);
+    
+    for(y =0; y < 6; y++){
+        for(x = 0; x < 6; x++){
+            if(block[y][x].Visible == 1){
                 block_num += 1;
+                HgWSetFillColor(block_layer,HG_RED);
+                HgWSetColor(block_layer,HG_WHITE);
+                HgWSetWidth(block_layer,2.0);
+                HgWBoxFill(block_layer,(x+1) * BLOCK_FIRST_DRAW_POS_X + BETWEEN_BLOCKS_WIDTH, BLOCK_FIRST_DRAW_POS_Y-(y*50) + BETWEEN_BLOCKS_HEIGHT,BLOCK_WIDTH,BLOCK_HEIGHT,1);
             }
         }
     }
-    return 0;
 }
 
-int bar_ball_move(){
-    int image_1 = HgImageLoad("../Graphics/main1.png");
+//ボールとパドルを描画
+void DrawBall_Paddle(void){
+    game_layer = HgLSwitch(&game_doubleLayer);
+    HgLClear(game_layer);
+    HgWSetFillColor(game_layer,HG_YELLOW);
+    HgWSetColor(game_layer,HG_WHITE);
+    HgWSetWidth(game_layer,1.0);
+    HgWCircleFill(game_layer,ball[0].X,ball[0].Y,ball[0].R,1);  //ボール(黄色)
+    HgWSetFillColor(game_layer,HG_BLUE);
+    HgWCircleFill(game_layer,ball[1].X,ball[1].Y,ball[1].R,1);  //ボール(青色)
+    
+    HgWBoxFill(game_layer,paddle[0].X,paddle[0].Y,paddle[0].W,paddle[0].H,1);  //上のバー(青色)
+    HgWBoxFill(game_layer,paddle[1].X,paddle[1].Y,paddle[1].W,paddle[1].H,1);  //下のバー(青色)
+}
+
+int MainLoop(void){
+    srand((unsigned int)time(NULL));
+    
+    HgWSetEventMask(mainWid,HG_KEY_DOWN);    //キー入力のみを検出する
     for (;;){
-        //ブロック表示
-        layerID_block = HgLSwitch(&layers_block);
-        HgLClear(layerID_block);
-        for(i = 0; i < block_no; i ++){
-            for(j = 0; j< block_no; j ++){
-                if (block_array[i][j] != 0){
-                    HgWSetFillColor(layerID_block,HG_RED);
-                    HgWSetColor(layerID_block,HG_WHITE);
-                    HgWSetWidth(layerID_block,2.0);
-                    HgWBoxFill(layerID_block,(j+1) * BLOCK_X_START + block_space_w, (i+1) * BLOCK_Y_START + block_space_h - (460 * i),BLOCK_WIDTH,BLOCK_HEIGHT,1);
-                }
-            }
-        }
         //ブロックの当たり判定
-        if (ball_y >= 500){
-            block_line_x = ((ball_y % 500) / 40);   //ボールが今何列目にあるのかを計算
-        }
-        if (ball_x >= 100){
-            block_line_y = (ball_x / 100 - 1);    //ボールが今何行目にあるのかを計算
-        }
-        if (ball_y >= BLOCK_Y_START && ball_y <= (BLOCK_HEIGHT * block_no) + (block_space_h * (block_no - 1)) + BLOCK_Y_START){    //ブロックの上またはブロックの下に当たった場合
-            if (block_line_x <= 5 && block_line_y <= 5){
-                if (block_array[block_line_x][block_line_y] != 0){
-                    ball_dy *= -1;
-                    block_array[block_line_x][block_line_y] = 0;
-                    score += 100;
-                    block_num -= 1;
-                    HgSoundPlay(SE_1);
-                }
-            }
-        }
-        if (block_num == 0){
-            HgSoundStop(soundID_1);
-            game_clear();
-            break;
-        }
-        layerID = HgLSwitch(&layers);   //(3)レイヤを切り替える
-        HgLClear(layerID);                  //レイヤを消去
-        HgWImageDraw(layerID,0,0,image_1);
-        HgWSetWidth(layerID,7.0);                                       //線の太さを定義
-        HgWSetColor(layerID,HG_ORANGE);                                 //線の色を定義
-        HgWLine(layerID,GAME_WIDTH,0,GAME_WIDTH,HEIGHT);                //線を描画
-        HgWSetFillColor(layerID,HG_GRAY);                               //スコアを表示する背景をグレーに設定
-        HgWBoxFill(layerID,GAME_WIDTH,0,WIDTH - GAME_WIDTH,HEIGHT,0);   //スコアを表示する背景をグレーで塗りつぶす
-        HgWSetColor(layerID,HG_BLACK);                                  //文字の色を黒に設定
-        HgWSetFont(layerID,HG_M,20);                                    //文字のフォントを明朝、フォントサイズを20に設定
-        HgWText(layerID,GAME_WIDTH + 20,HEIGHT - 300,"残り : ");            //「残り」の文字を描画
-        switch (ball_zanki){
-            case 2:
-                HgWSetFillColor(layerID,HG_YELLOW);                             //黄色に設定
-                HgWSetWidth(layerID,1.0);                                       //線の太さを定義
-                HgWCircleFill(layerID,GAME_WIDTH + 50,HEIGHT - 340,ball_r,1);   //ボールの残機数を表示 (１個目)
-                HgWCircleFill(layerID,GAME_WIDTH + 100,HEIGHT - 340,ball_r,1);   //ボールの残機数を表示 (２個目)
-                HgWCircleFill(layerID,GAME_WIDTH + 150,HEIGHT - 340,ball_r,1);   //ボールの残機数を表示 (３個目)
-                break;
-            case 1:
-                HgWSetFillColor(layerID,HG_YELLOW);                             //黄色に設定
-                HgWSetWidth(layerID,1.0);                                       //線の太さを定義
-                HgWCircleFill(layerID,GAME_WIDTH + 50,HEIGHT - 340,ball_r,1);   //ボールの残機数を表示 (１個目)
-                HgWCircleFill(layerID,GAME_WIDTH + 100,HEIGHT - 340,ball_r,1);   //ボールの残機数を表示 (２個目)
-                break;
-            case 0:
-                HgWSetFillColor(layerID,HG_YELLOW);                             //黄色に設定
-                HgWSetWidth(layerID,1.0);                                       //線の太さを定義
-                HgWCircleFill(layerID,GAME_WIDTH + 50,HEIGHT - 340,ball_r,1);   //ボールの残機数を表示 (１個目)
-                break;
-        }
-        HgWSetEventMask(windowID,HG_KEY_DOWN);    //キー入力のみを検出する
+
+        //ボールとパドルを描画
+        DrawBall_Paddle();
+
+        //キーボード入力
         hgevent *event = HgEventNonBlocking();     //HandyGraphicのイベントを扱うための変数
-        HgWSetFillColor(layerID,HG_YELLOW);
-        HgWSetColor(layerID,HG_WHITE);
-        HgWSetWidth(layerID,1.0);
-        HgWCircleFill(layerID,ball_x,ball_y,ball_r,1);  //ボール(黄色)
-        HgWSetFillColor(layerID,HG_BLUE);
-        HgWBoxFill(layerID,bar_x_up,bar_y_up,bar_w,bar_h,1);  //バー(青色)
-        HgWBoxFill(layerID,bar_x_down,bar_y_down,bar_w,bar_h,1);  //バー(青色)
-        HgWSetFont(layerID,HG_M,20);                                    //文字のフォントを明朝、フォントサイズを20に設定
-        HgWSetColor(layerID,HG_BLACK);
-        HgWText(layerID,GAME_WIDTH + 20,HEIGHT - 100,"SCORE : %d",score);        //「SCORE」の文字を描画
-        HgWText(layerID,GAME_WIDTH + 20,HEIGHT - 500,"Fキーで左へ移動");
-        HgWText(layerID,GAME_WIDTH + 20,HEIGHT - 550,"Jキーで右へ移動");
-        HgWText(layerID,GAME_WIDTH + 20,HEIGHT - 700,"Qキーで終了");
         if (event != NULL){
             if (event -> type == HG_KEY_DOWN){
                 switch(event -> ch){
                     case 'f':
-                        bar_x_up += 25;
-                        bar_x_down -= 25;
-                        if (bar_x_up + bar_w >= GAME_WIDTH){
-                            bar_x_up = GAME_WIDTH - bar_w;
+                        paddle[0].X += 30;
+                        paddle[1].X -= 30;
+                        if (paddle[0].X + paddle[0].W >= GAME_SCREEN_WIDTH-3){
+                            paddle[0].X = GAME_SCREEN_WIDTH - paddle[0].W-3;
                         }
-                        if (bar_x_down <= 0){
-                            bar_x_down = 0;
+                        if (paddle[1].X <= 0){
+                            paddle[1].X = 0;
                         }
                         break;
                     case 'j':
-                        bar_x_up -= 25;
-                        bar_x_down += 25;
-                        if (bar_x_up <= 0){
-                            bar_x_up = 0;
+                        paddle[0].X -= 30;
+                        paddle[1].X += 30;
+                        if (paddle[0].X <= 0){
+                            paddle[0].X = 0;
                         }
-                        if (bar_x_down + bar_w >= GAME_WIDTH){
-                            bar_x_down = GAME_WIDTH - bar_w;
+                        if (paddle[1].X + paddle[1].W >= GAME_SCREEN_WIDTH-3){
+                            paddle[1].X = GAME_SCREEN_WIDTH - paddle[1].W-3;
                         }
                         break;
+
                     case 'q':
-                        HgClose();
+                        HgCloseAll();
                         return 0;
-                    default:   continue;
                 }
             }
         }
-        ball_x += ball_dx;
-        ball_y += ball_dy;
-        //横方向の処理
-        if (ball_x >= GAME_WIDTH - ball_r || ball_x <= ball_r){
-            ball_dx *= -1;
+        
+        if(ball[0].Y > paddle[0].Y-10 || ball[1].Y > paddle[0].Y-10){
+            //上のパドルと黄色ボールの当たり判定                                                                       ball[0].X+ball[0].R >= paddle[0].X && ball[0].X-ball[0].R <= paddle[0].X+paddle[0].W
+            distance(paddle[0].X,paddle[0].Y,paddle[0].X+paddle[0].W,paddle[0].Y,ball[0].X,ball[0].Y+ball[0].R) <= 4.0  && ball[0].X+ball[0].R >= paddle[0].X && ball[0].X-ball[0].R <= paddle[0].X+paddle[0].W && ball[0].Y-ball[0].R <= paddle[0].Y && ball[0].DirY > 0 ? ball[0].DirY *= -1,HgSoundPlay(SE_2): ball[0].DirY;
+            
+            //上のパドルと青色ボールの当たり判定
+            distance(paddle[0].X,paddle[0].Y,paddle[0].X+paddle[0].W,paddle[0].Y,ball[1].X,ball[1].Y+ball[1].R) <= 4.0  && ball[1].X+ball[1].R >= paddle[0].X && ball[1].X-ball[1].R <= paddle[0].X+paddle[0].W  && ball[1].Y-ball[1].R <= paddle[0].Y && ball[1].DirY > 0 ? ball[1].DirY *= -1,HgSoundPlay(SE_2): ball[1].DirY;
         }
-        if (ball_x < 0){
-            ball_x = ball_r;
+        
+        if(ball[0].Y < paddle[1].Y+paddle[1].H+10 || ball[1].Y < paddle[1].Y+paddle[1].H+10){
+            //下のパドルと黄色ボールの当たり判定                                                                       ball[0].X+ball[0].R >= paddle[1].X && ball[0].X-ball[0].R <= paddle[1].X+paddle[1].W
+            distance(paddle[1].X,paddle[1].Y+paddle[1].H,paddle[1].X+paddle[1].W,paddle[1].Y+paddle[1].H,ball[0].X,ball[0].Y) <= 8.0  && ball[0].X+ball[0].R >= paddle[1].X && ball[0].X-ball[0].R <= paddle[1].X+paddle[1].W && ball[0].Y+ball[0].R >= paddle[1].Y+paddle[1].H && ball[0].DirY < 0 ? ball[0].DirY *= -1,HgSoundPlay(SE_2): ball[0].DirY;
+            
+            //下のパドルと青色ボールの当たり判定
+            distance(paddle[1].X,paddle[1].Y+paddle[1].H,paddle[1].X+paddle[1].W,paddle[1].Y+paddle[1].H,ball[1].X,ball[1].Y) <= 8.0  && ball[1].X+ball[1].R >= paddle[1].X && ball[1].X-ball[1].R <= paddle[1].X+paddle[1].W && ball[1].Y+ball[1].R >= paddle[1].Y+paddle[1].H && ball[1].DirY < 0 ? ball[1].DirY *= -1,HgSoundPlay(SE_2): ball[1].DirY;
         }
-        if (ball_x > GAME_WIDTH - ball_r){
-            ball_x = GAME_WIDTH - ball_r;
+        
+        //パドルの操作
+        ball[0].X += ball[0].DirX;
+        ball[0].Y += ball[0].DirY;
+
+        ball[1].X += ball[1].DirX;
+        ball[1].Y += ball[1].DirY;
+
+        //ボールがゲーム画面の左右に行った時の跳ね返り
+        if (ball[0].X >= GAME_SCREEN_WIDTH - ball[0].R || ball[0].X <= ball[0].R){
+            ball[0].DirX *= -1;
         }
-        //縦方向の処理
-        if (ball_y >= HEIGHT - ball_r){ //上
-            if (ball_zanki > 0){
-                ball_zanki -= 1;
-                bar_x_up = 670,bar_y_up = 750;
-                bar_x_down = 0; bar_y_down = 100;  //バーの左下X,Y座標
-                bar_w = 130; bar_h = 20;   //バーの幅と高さ
-                ball_x = 200; ball_dx = 8;//ボールのX座標と移動量X
-                ball_y = 300; ball_dy = 8;//ボールのY座標と移動量Y
-                bar_ball_move();    //バーとボールを動かす処理
-                return 0;
-            }
-            if (ball_zanki == 0){
+
+        //ボールがゲーム画面の左端に行った時
+        if (ball[0].X-ball[0].R < 0){
+            ball[0].X = ball[0].R;
+        }
+
+        //ボールがゲーム画面の右端に行った時
+        if (ball[0].X+ball[0].R > GAME_SCREEN_WIDTH){
+            ball[0].X = GAME_SCREEN_WIDTH - ball[0].R;
+        }
+        
+        //ボールがゲーム画面の上に行った時 || ボールがゲーム画面の下に行った時
+        if (ball[0].Y - ball[0].R*2 > WINDOW_HEIGHT || ball[0].Y + ball[0].R*2 < 0){
+            ball_zanki -= 1;
+            HgLShow(game_start_layer,0);
+            HgSoundStop(SE_1);
+            HgSoundStop(SE_2);
+            if(ball_zanki == -1){
+                HgLShow(game_start_layer,1);
+                HgLMove(game_start_layer,2);
                 HgSoundStop(soundID_1);
-                game_over();
+                GameOver();
                 break;
             }
+            Initialize();       //バーとボールの位置とボールの移動方向を初期化
+            DrawPlayerInfo();
+            MainLoop();         //バーとボールを動かす処理
+            return 0;
         }
-        if (ball_y < ball_r){  //下
-            if (ball_zanki > 0){
-                ball_zanki -= 1;
-                bar_x_up = 670,bar_y_up = 750;
-                bar_x_down = 0; bar_y_down = 100;  //バーの左下X,Y座標
-                bar_w = 130; bar_h = 20;   //バーの幅と高さ
-                ball_x = 200; ball_dx = 8;//ボールのX座標と移動量X
-                ball_y = 300; ball_dy = 8;//ボールのY座標と移動量Y
-                bar_ball_move();    //バーとボールを動かす処理
-                return 0;
-            }
-            if (ball_zanki == 0){
-                HgSoundStop(soundID_1);
-                game_over();
-                break;
-            }
+        
+        /*----------------------*/
+        //ボールがゲーム画面の左右に行った時の跳ね返り
+        if (ball[1].X >= GAME_SCREEN_WIDTH - ball[1].R || ball[1].X <= ball[1].R){
+            ball[1].DirX *= -1;
         }
-        if (ball_y < 0){
-            ball_y = ball_r;
+
+        //ボールがゲーム画面の左端に行った時
+        if (ball[1].X-ball[1].R < 0){
+            ball[1].X = ball[1].R;
         }
-        if (ball_y > HEIGHT - ball_r){
-            ball_y = HEIGHT - ball_r;
+
+        //ボールがゲーム画面の右端に行った時
+        if (ball[1].X+ball[1].R > GAME_SCREEN_WIDTH){
+            ball[1].X = GAME_SCREEN_WIDTH - ball[1].R;
         }
-        //バーとブロックの当たり判定
-            if (ball_x >= bar_x_down - ball_r * 2 && ball_x <= bar_x_down + bar_w + ball_r * 2){    //ボールがバーの左側 + ボールの直径 以上 && ボールがバーの右側 + ボールの直径 以下
-                if (ball_y - ball_r == bar_y_down + bar_h || ball_y - ball_r == bar_y_down + bar_h + 4){ //ボールが下+高さ以上
-                    ball_dy *= -1;
-                    HgSoundPlay(SE_2);
-                }
-            }
-        if (ball_x >= bar_x_up - ball_r * 2 && ball_x <= bar_x_up + bar_w + ball_r * 2){    //ボールがバーの左側 + ボールの直径 以上 && ボールがバーの右側 + ボールの直径 以下
-                if (ball_y + ball_r >= bar_y_up){ //ボールが下+高さ以上
-                    ball_dy *= -1;
-                    HgSoundPlay(SE_2);
-                }
-            }
-        HgSleep(0.03);
+        
+        //ボールがゲーム画面の上に行った時 || ボールがゲーム画面の下に行った時
+        if (ball[1].Y + ball[1].R*2 > WINDOW_HEIGHT || ball[1].Y - ball[1].R*2 < 0){
+            ball[1].DirY *= -1;
+        }
+
+        HgSleep(0.016);
     }
-return 0;
+    return 0;
 }
 
-int game_clear(){
+//線分と点の垂線の距離を返す
+double distance(double lineX1, double lineY1, double lineX2, double lineY2, double dotX, double dotY){
+    double a, b, c; // ax + by + c = 0
+    double root;
+    double dist;    // 求める距離
+
+    a = lineY1 - lineY2;
+    b = lineX2 - lineX1;
+    c = (-b * lineY1) + (-a * lineX1);
+    root = sqrt(a*a + b*b);
+
+    if(root == 0.0){
+        return -1.0;    // 求められない場合は負の値を返す
+    }
+
+    dist = ((a * dotX) + (b * dotY) + c) / root;
+
+    if(dist < 0.0){
+        dist = -dist;
+    }
+
+    return dist;
+}
+
+int GameClear(void){
         HgClear();
         HgSoundPlay(soundID_2);
         mes_win = HgAlert("GAME CLEAR!\n\nOKでエンディングへ","OK",NULL,NULL);
         if(mes_win == 0){
             HgSoundStop(soundID_2);
-            result = system(program2);
-            HgClose();
+            HgCloseAll();result = system(program2);
         }
     return 0;
 }
 
-int game_over(){
-        HgClear();
+int GameOver(void){
         HgSoundPlay(soundID_3);
-        mes_win = HgAlert("GAME OVER!\n\nOKでタイトルへ","OK",NULL,NULL);
-        if(mes_win == 0){
-            HgSoundStop(soundID_3);
-            result = system(program);
-            HgClose();
+        DrawScreenText(2);
+        for(;;){
+            hgevent *event = HgEventNonBlocking();     //HandyGraphicのイベントを扱うための変数
+            if (event != NULL){
+                if (event -> type == HG_KEY_DOWN){
+                    switch(event -> ch){
+                        case ' ':
+                            //タイトル画面に戻る
+                            HgSoundStop(soundID_3);
+                            HgCloseAll();result = system(program);
+                            return 0;
+                        case 'q':
+                            //ゲーム終了
+                            HgCloseAll();
+                            return 0;
+                    }
+                }
+            }
         }
     return 0;
 }
