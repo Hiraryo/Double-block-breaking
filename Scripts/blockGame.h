@@ -1,32 +1,29 @@
-enum
-{
-    //ウィンドウの幅
-    WINDOW_WIDTH = 1000,
+//ウィンドウの幅
+const int WINDOW_WIDTH = 1000;
 
-    //ウィンドウの高さ
-    WINDOW_HEIGHT = 800,
+//ウィンドウの高さ
+const int WINDOW_HEIGHT = 800;
 
-    //ゲーム画面の幅
-    GAME_SCREEN_WIDTH = 800,
+//ゲーム画面の幅
+const int GAME_SCREEN_WIDTH = 800;
 
-    //ブロックの幅
-    BLOCK_WIDTH = 90,
+//ブロックの幅
+const int BLOCK_WIDTH = 90;
 
-    //ブロックの高さ
-    BLOCK_HEIGHT = 30,
+//ブロックの高さ
+const int BLOCK_HEIGHT = 30;
 
-    //ブロックのX座標(１番左上のブロック)
-    BLOCK_FIRST_DRAW_POS_X = 100,
+//ブロックのX座標(１番左上のブロック)
+const int BLOCK_FIRST_DRAW_POS_X = 100;
 
-    //ブロックのY座標(１番左上のブロック)
-    BLOCK_FIRST_DRAW_POS_Y = 500,
+//ブロックのY座標(１番左上のブロック)
+const int BLOCK_FIRST_DRAW_POS_Y = 500;
 
-    //ブロックとブロックの間隔(左右)
-    BETWEEN_BLOCKS_WIDTH = 25,
+//ブロックとブロックの間隔(左右)
+const int BETWEEN_BLOCKS_WIDTH = 25;
 
-    //ブロックとブロックの間隔(上下)
-    BETWEEN_BLOCKS_HEIGHT = 10
-};
+//ブロックとブロックの間隔(上下)
+const int BETWEEN_BLOCKS_HEIGHT = 10;
 
 struct BALL
 {
