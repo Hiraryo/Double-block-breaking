@@ -32,19 +32,19 @@ struct BALL
 {
     double X,Y,R,DirX,DirY;
     float Speed;
-};
+} ball[2];
 
 struct PADDLE
 {
     double X,Y,W,H;
     int Length;
-};
+} paddle[2];
 
 struct BLOCK
 {
     int X, Y;
-    unsigned int Visible;
-};
+    unsigned int Visible : 1;
+} block[6][6];
 
 
 /*関数プロトタイプ宣言*/
@@ -57,5 +57,5 @@ int MainLoop(void);    //メインループ
 int GameClear(void);       //ゲームクリア関数
 int GameOver(void);        //ゲームオーバー関数
 int SelectStageData(void); //ステージデータ選択関数
-int LoadStageData(void);  //ステージデータを読み込む関数
-double distance(double lineX1, double lineY1, double lineX2, double lineY2, double dotX, double dotY);
+void LoadStageData(void);  //ステージデータを生成する関数
+double Distance(double lineX1, double lineY1, double lineX2, double lineY2, double dotX, double dotY);

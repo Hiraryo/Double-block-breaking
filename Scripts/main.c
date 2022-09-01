@@ -34,9 +34,6 @@ int block_layer,   //ブロックのレイヤー
     player_info_layer, //残機数やスコアを表示するレイヤー
     game_layer,    //ボールやパドルを表示するレイヤー
     game_start_layer;
-struct BALL ball[2];
-struct PADDLE paddle[2];
-struct BLOCK block[6][6];
 
 int main(void){
     
@@ -78,14 +75,13 @@ int SelectStageData(void){
 }
 */
 
-//ステージデータを読み込む
-int LoadStageData(void){
+//ステージデータを生成
+void LoadStageData(void){
     for(int y=0; y<6; y++){
         for(int x=0; x<6; x++){
             block[y][x].Visible = 1;
         }
     }
-    return 0;
 }
 
 void Initialize(void){
@@ -247,21 +243,21 @@ int MainLoop(void){
         
         if(ball[0].Y > paddle[0].Y-10 || ball[1].Y > paddle[0].Y-10){
             //上のパドルと黄色ボールの当たり判定                                                                       ball[0].X+ball[0].R >= paddle[0].X && ball[0].X-ball[0].R <= paddle[0].X+paddle[0].W
-            distance(paddle[0].X,paddle[0].Y,paddle[0].X+paddle[0].W,paddle[0].Y,ball[0].X,ball[0].Y+ball[0].R) <= 4.0  && ball[0].X+ball[0].R >= paddle[0].X && ball[0].X-ball[0].R <= paddle[0].X+paddle[0].W && ball[0].Y-ball[0].R <= paddle[0].Y && ball[0].DirY > 0 ? ball[0].DirY *= -1,HgSoundPlay(SE_2): ball[0].DirY;
+            Distance(paddle[0].X,paddle[0].Y,paddle[0].X+paddle[0].W,paddle[0].Y,ball[0].X,ball[0].Y+ball[0].R) <= 4.0  && ball[0].X+ball[0].R >= paddle[0].X && ball[0].X-ball[0].R <= paddle[0].X+paddle[0].W && ball[0].Y-ball[0].R <= paddle[0].Y && ball[0].DirY > 0 ? ball[0].DirY *= -1,HgSoundPlay(SE_2): ball[0].DirY;
             
             //上のパドルと青色ボールの当たり判定
-            distance(paddle[0].X,paddle[0].Y,paddle[0].X+paddle[0].W,paddle[0].Y,ball[1].X,ball[1].Y+ball[1].R) <= 4.0  && ball[1].X+ball[1].R >= paddle[0].X && ball[1].X-ball[1].R <= paddle[0].X+paddle[0].W  && ball[1].Y-ball[1].R <= paddle[0].Y && ball[1].DirY > 0 ? ball[1].DirY *= -1,HgSoundPlay(SE_2): ball[1].DirY;
+            Distance(paddle[0].X,paddle[0].Y,paddle[0].X+paddle[0].W,paddle[0].Y,ball[1].X,ball[1].Y+ball[1].R) <= 4.0  && ball[1].X+ball[1].R >= paddle[0].X && ball[1].X-ball[1].R <= paddle[0].X+paddle[0].W  && ball[1].Y-ball[1].R <= paddle[0].Y && ball[1].DirY > 0 ? ball[1].DirY *= -1,HgSoundPlay(SE_2): ball[1].DirY;
         }
         
         if(ball[0].Y < paddle[1].Y+paddle[1].H+10 || ball[1].Y < paddle[1].Y+paddle[1].H+10){
             //下のパドルと黄色ボールの当たり判定                                                                       ball[0].X+ball[0].R >= paddle[1].X && ball[0].X-ball[0].R <= paddle[1].X+paddle[1].W
-            distance(paddle[1].X,paddle[1].Y+paddle[1].H,paddle[1].X+paddle[1].W,paddle[1].Y+paddle[1].H,ball[0].X,ball[0].Y) <= 8.0  && ball[0].X+ball[0].R >= paddle[1].X && ball[0].X-ball[0].R <= paddle[1].X+paddle[1].W && ball[0].Y+ball[0].R >= paddle[1].Y+paddle[1].H && ball[0].DirY < 0 ? ball[0].DirY *= -1,HgSoundPlay(SE_2): ball[0].DirY;
+            Distance(paddle[1].X,paddle[1].Y+paddle[1].H,paddle[1].X+paddle[1].W,paddle[1].Y+paddle[1].H,ball[0].X,ball[0].Y) <= 8.0  && ball[0].X+ball[0].R >= paddle[1].X && ball[0].X-ball[0].R <= paddle[1].X+paddle[1].W && ball[0].Y+ball[0].R >= paddle[1].Y+paddle[1].H && ball[0].DirY < 0 ? ball[0].DirY *= -1,HgSoundPlay(SE_2): ball[0].DirY;
             
             //下のパドルと青色ボールの当たり判定
-            distance(paddle[1].X,paddle[1].Y+paddle[1].H,paddle[1].X+paddle[1].W,paddle[1].Y+paddle[1].H,ball[1].X,ball[1].Y) <= 8.0  && ball[1].X+ball[1].R >= paddle[1].X && ball[1].X-ball[1].R <= paddle[1].X+paddle[1].W && ball[1].Y+ball[1].R >= paddle[1].Y+paddle[1].H && ball[1].DirY < 0 ? ball[1].DirY *= -1,HgSoundPlay(SE_2): ball[1].DirY;
+            Distance(paddle[1].X,paddle[1].Y+paddle[1].H,paddle[1].X+paddle[1].W,paddle[1].Y+paddle[1].H,ball[1].X,ball[1].Y) <= 8.0  && ball[1].X+ball[1].R >= paddle[1].X && ball[1].X-ball[1].R <= paddle[1].X+paddle[1].W && ball[1].Y+ball[1].R >= paddle[1].Y+paddle[1].H && ball[1].DirY < 0 ? ball[1].DirY *= -1,HgSoundPlay(SE_2): ball[1].DirY;
         }
         
-        //パドルの操作
+        //ボールの移動
         ball[0].X += ball[0].DirX;
         ball[0].Y += ball[0].DirY;
 
@@ -329,7 +325,7 @@ int MainLoop(void){
 }
 
 //線分と点の垂線の距離を返す
-double distance(double lineX1, double lineY1, double lineX2, double lineY2, double dotX, double dotY){
+double Distance(double lineX1, double lineY1, double lineX2, double lineY2, double dotX, double dotY){
     double a, b, c; // ax + by + c = 0
     double root;
     double dist;    // 求める距離
