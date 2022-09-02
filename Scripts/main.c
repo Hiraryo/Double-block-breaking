@@ -111,7 +111,7 @@ void DrawPlayerInfo(void){
     HgWSetFillColor(player_info_layer,HG_GRAY);                               //スコアを表示する背景をグレーに設定
     HgWBoxFill(player_info_layer,GAME_SCREEN_WIDTH,0,WINDOW_WIDTH - GAME_SCREEN_WIDTH,WINDOW_HEIGHT,0);   //スコアを表示する背景をグレーで塗りつぶす
     HgWSetColor(player_info_layer,HG_BLACK);                                  //文字の色を黒に設定
-    HgWSetFont(player_info_layer,HG_M,20);                                    //文字のフォントを明朝、フォントサイズを20に設定
+    HgWSetFont(player_info_layer,HG_H,20);                                    //文字のフォントを明朝、フォントサイズを20に設定
     HgWText(player_info_layer,GAME_SCREEN_WIDTH + 20,WINDOW_HEIGHT - 100,"SCORE : %d",score);        //「SCORE」の文字を描画
     HgWText(player_info_layer,GAME_SCREEN_WIDTH + 20,WINDOW_HEIGHT - 300,"残り : ");            //「残り」の文字を描画
     HgWSetFillColor(player_info_layer,HG_YELLOW);                             //黄色に設定
@@ -133,7 +133,7 @@ void DrawScreenText(int state){
     switch (state)
     {
     case 0:
-        HgWSetFont(game_start_layer,HG_M,80);
+        HgWSetFont(game_start_layer,HG_H,80);
         HgWSetFillColor(game_start_layer,HgRGBA(0.5, 0.5, 0, 0.5)); //オレンジ
         HgWBoxFill(game_start_layer,0,WINDOW_HEIGHT/3,GAME_SCREEN_WIDTH-4,WINDOW_HEIGHT/3,1);
         HgWSetColor(game_start_layer, HgRGBA(1.0, 1.0, 1.0, 0.5));
@@ -141,22 +141,22 @@ void DrawScreenText(int state){
         break;
     
     case 1:
-        HgWSetFont(game_start_layer,HG_M,80);
+        HgWSetFont(game_start_layer,HG_H,80);
         HgWSetFillColor(game_start_layer,HgRGBA(0.8, 0.8, 0.0, 0.6)); //黄色
         HgWBoxFill(game_start_layer,0,WINDOW_HEIGHT/3,GAME_SCREEN_WIDTH-4,WINDOW_HEIGHT/3,1);
         HgWSetColor(game_start_layer, HgRGB(0.1, 0.1, 0.1));
         HgWText(game_start_layer, GAME_SCREEN_WIDTH/8, WINDOW_HEIGHT/3+100, "ゲームクリア！！");
-        HgWSetFont(game_start_layer,HG_M,30);
+        HgWSetFont(game_start_layer,HG_H,30);
         HgWText(game_start_layer, GAME_SCREEN_WIDTH/5, WINDOW_HEIGHT/3+40, "スペースキーを押してタイトルへ");
         break;
 
     case 2:
-        HgWSetFont(game_start_layer,HG_M,60);
+        HgWSetFont(game_start_layer,HG_H,60);
         HgWSetFillColor(game_start_layer,HgRGBA(0.0,0.0,0.0,0.9)); //グレー
         HgWBoxFill(game_start_layer,0,WINDOW_HEIGHT/3,GAME_SCREEN_WIDTH-4,WINDOW_HEIGHT/3,1);
         HgWSetColor(game_start_layer, HG_WHITE);
         HgWText(game_start_layer, GAME_SCREEN_WIDTH/6, WINDOW_HEIGHT/3+100, "Game Over（ ;  ; ）");
-        HgWSetFont(game_start_layer,HG_M,30);
+        HgWSetFont(game_start_layer,HG_H,30);
         HgWText(game_start_layer, GAME_SCREEN_WIDTH/5, WINDOW_HEIGHT/3+40, "スペースキーを押してタイトルへ");
         break;
 

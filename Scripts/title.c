@@ -22,18 +22,18 @@ int main(){
     int text_layer = HgWAddLayer(mainWid);
     HgLClear(text_layer);
     HgWSetColor(text_layer,HgRGB(0.8, 0.8, 0));
-    HgWSetFont(text_layer,HG_M,50);                                    //文字のフォントを明朝、フォントサイズを20に設定
+    HgWSetFont(text_layer,HG_H,50);                                    //文字のフォントを明朝、フォントサイズを20に設定
     HgWText(text_layer,WINDOW_WIDTH/2-(3*50),500,"ブロック崩し");        //「ブロック崩し」の文字を描画 6文字
     
     //遊び方説明文
-    HgWSetFont(text_layer,HG_M,25);
+    HgWSetFont(text_layer,HG_H,25);
     HgWSetColor(text_layer,HG_WHITE);
     HgWText(text_layer, WINDOW_WIDTH/2-(2*25+13), 370, "〜遊び方〜");
     HgWText(text_layer, WINDOW_WIDTH/2-(11*25+12), 290, "FキーとJキーで上下にあるパドルを操作します。\n上のパドルは入力方向の反対方向に移動します。");
     HgWSetColor(text_layer,HG_WHITE);
-    HgWSetFont(text_layer,HG_M,30);
+    HgWSetFont(text_layer,HG_H,30);
     HgWText(text_layer,WINDOW_WIDTH/2 - (5*30+15),150,"スペースキーでスタート");
-    HgWSetFont(text_layer,HG_M,20);
+    HgWSetFont(text_layer,HG_H,20);
     HgWText(text_layer,WINDOW_WIDTH/2-(3*20),100,"Qキーで終了");
 
     // メインループ
