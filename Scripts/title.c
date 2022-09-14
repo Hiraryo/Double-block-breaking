@@ -1,60 +1,60 @@
-/**
- * このゲームはブロック崩しです。
- * このソースコードはタイトルのプログラムです。
- * このプログラムのコンパイル方法は、
- * $ hgcc -o title title.c
- * です。
- */
 #include <stdio.h>
 #include <handy.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include "title.h"
 #include "blockGame.h"
 
-int main(){
-    char program[] = "./main";
-    int mainWid = HgOpen(WINDOW_WIDTH,WINDOW_HEIGHT);
-    int image_1 = HgImageLoad("../Graphics/title.png"); //背景画像
-    int soundID_1 = HgSoundLoad("../Sounds/4478.mp3");   //タイトルBGM
-    HgSoundVolume(soundID_1,0.4,1);
+doubleLayer title_screen_doubleLayer;
+int title_logo_layer;
+int transition_effect_layer;
+float posX = WINDOW_WIDTH/2-3*TITLE_FONT_SIZE;
+float posY = WINDOW_HEIGHT-TITLE_FONT_SIZE*3;
+int speed = 10;
+int radius = 0;
 
-    //背景画像とタイトルの描画
-    HgWImageDraw(mainWid,0,0,image_1);
-    int text_layer = HgWAddLayer(mainWid);
-    HgLClear(text_layer);
-    HgWSetColor(text_layer,HgRGB(0.8, 0.8, 0));
-    HgWSetFont(text_layer,HG_H,50);                                    //文字のフォントを明朝、フォントサイズを20に設定
-    HgWText(text_layer,WINDOW_WIDTH/2-(3*50),500,"ブロック崩し");        //「ブロック崩し」の文字を描画 6文字
-    
-    //遊び方説明文
-    HgWSetFont(text_layer,HG_H,25);
-    HgWSetColor(text_layer,HG_WHITE);
-    HgWText(text_layer, WINDOW_WIDTH/2-(2*25+13), 370, "〜遊び方〜");
-    HgWText(text_layer, WINDOW_WIDTH/2-(11*25+12), 290, "FキーとJキーで上下にあるパドルを操作します。\n上のパドルは入力方向の反対方向に移動します。");
-    HgWSetColor(text_layer,HG_WHITE);
-    HgWSetFont(text_layer,HG_H,30);
-    HgWText(text_layer,WINDOW_WIDTH/2 - (5*30+15),150,"スペースキーでスタート");
-    HgWSetFont(text_layer,HG_H,20);
-    HgWText(text_layer,WINDOW_WIDTH/2-(3*20),100,"Qキーで終了");
+void make_screen(const int *windowId, const int *imageId, const int *soundId){
+    //char program[] = "./main";
+    title_screen_doubleLayer = HgWAddDoubleLayer(*windowId);
+    float bgm_volume = 1.0;
+    HgWImageDraw(*windowId,0,0,*imageId);
+    HgSoundVolume(*soundId,bgm_volume,1);
+    HgSoundPlay(*soundId);
+    HgSetFillColor(HgRGBA(0.25,0.25,0.25,0.5));
+    HgBoxFill(0,70,WINDOW_WIDTH,70,0);
+    HgSetColor(HG_WHITE);
+    HgSetFont(HG_H,FONT_H3);
+    HgText(WINDOW_WIDTH/2-7*FONT_H3,105,"スペースキーを押してスタート！");
+    HgSetColor(HG_GRAY);
+    HgSetFont(HG_H,FONT_H4);
+    HgText(WINDOW_WIDTH/2-3*FONT_H4,80,"Qキーで終了");
+}
 
-    // メインループ
-    HgSoundPlay(soundID_1);
-    HgSetEventMask(HG_KEY_DOWN);    //キー入力のみを検出する
-    for (;;){
-        hgevent *event_title = HgEventNonBlocking();
-        if (event_title != NULL){
-            if (event_title -> type == HG_KEY_DOWN){
-                switch(event_title -> ch){
-                    case ' ':
-                        HgSoundStop(soundID_1);
-                        HgCloseAll();int result = system(program);
-                        return 0;
-                    case 'q':
-                        HgCloseAll();
-                        return 0;
-                    default:   continue;
-                }
-            }
-        }
+void update_screen(void){
+    title_logo_layer = HgLSwitch(&title_screen_doubleLayer);
+    HgLClear(title_logo_layer);
+    HgWSetColor(title_logo_layer,HG_WHITE);
+    HgWSetFont(title_logo_layer,HG_H,TITLE_FONT_SIZE);
+    HgWText(title_logo_layer,posX,posY,"ブロック崩し");
+    posX -= speed;
+    if(posX < 0 || posX+TITLE_FONT_SIZE*6 > WINDOW_WIDTH){
+        speed *= -1;
     }
-    return 0;
+}
+
+void transition_effect(int *radius){
+    while (*radius < WINDOW_WIDTH/2+500)
+    {
+        transition_effect_layer = HgLSwitch(&title_screen_doubleLayer);
+        HgLClear(transition_effect_layer);
+        HgWSetFillColor(transition_effect_layer,HgRGB(0.05,0.05,0.05));
+        HgWCircleFill(transition_effect_layer,WINDOW_WIDTH/2,WINDOW_HEIGHT/2,*radius,0);
+        (*radius)++;
+    }
+}
+
+void select_play_mode(int *play_mode){
+    printf("モード選択\n");
+    *play_mode = 2;
+    printf("2を選択\n");
 }
