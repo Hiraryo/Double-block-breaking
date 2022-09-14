@@ -29,7 +29,7 @@ void save_player_data(int *lv, int *hiscore){
     a = *lv;
     b = *hiscore;
     FILE *fp = NULL;
-    fp = fopen("sample.txt","w");
+    fp = fopen("playerlog.txt","w");
     fprintf(fp,"%d %d\n",a, b);
     fclose(fp);
 }
